@@ -5,11 +5,28 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Edward Yang的博客</title>
+  <title>ARC与非ARC下的Weak-Strong Dance - Edward Yang的博客</title>
   <meta name="author" content="Edward Yang">
 
   
-  <meta name="description" content="越狱之后用到SSH时需要通过Wi-Fi来连接，输入命令时反应比较慢，还容易掉线，尤其是在越狱开发时，有时会有砸设备、砸Mac的冲动，当然我砸不起，只是想想。 如果能通过USB连接就好了，既不需要依赖Wi-Fi，而且速度非常快，感谢开源社区的大牛们，usbmuxd开源库就顺带实现了这个功能。 &hellip;">
+  <meta name="description" content="ARC 在使用block过程中，经常会遇到retain cycle的问题，例如： 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+- (void)dealloc
+{ [[NSNotificationCenter defaultCenter] &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +35,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://yang6512.github.io">
+  <link rel="canonical" href="http://yang6512.github.io/blog/2013/07/29/arcyu-fei-arcxia-de-weak-strong-dance">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Edward Yang的博客" type="application/atom+xml">
@@ -65,77 +82,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/09/16/iproxy-tong-guo-usbshi-yong-sshlian-jie-iosshe-bei/">iproxy-通过USB使用SSH连接iOS设备</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-09-16T20:56:00+08:00" pubdate data-updated="true">2013年09月16日</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>越狱之后用到<code>SSH</code>时需要通过<code>Wi-Fi</code>来连接，输入命令时反应比较慢，还容易掉线，尤其是在越狱开发时，有时会有砸设备、砸Mac的冲动，当然我砸不起，只是想想。</p>
-
-<p>如果能通过USB连接就好了，既不需要依赖<code>Wi-Fi</code>，而且速度非常快，感谢开源社区的大牛们，<a href="http://cgit.sukimashita.com/usbmuxd.git/">usbmuxd</a>开源库就顺带实现了这个功能。</p>
-
-<p>通过<a href="http://brew.sh/">brew</a>来安装（当然也可以自己去下源码手动安装，由于依赖项比较多，所以很繁琐）</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>brew install usbmuxd
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装<code>usbmuxd</code>库之后，就顺带安装了一个小工具<code>iproxy</code>，该工具会将设备上的端口号映射到电脑上的某一个端口，例如：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>iproxy 2222 22
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>以上命令就是把当前连接设备的22端口(SSH端口)映射到电脑的2222端口，那么想和设备22端口通信，直接和本地的2222端口通信就可以了。
-因此，SSH连接设备就可以这样连接了：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>ssh -p 2222 root@127.0.0.1
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这样就再也不用依赖<code>Wi-Fi</code>了，而且反应很流畅，当然此工具不仅可以用于SSH，也可以映射其他端口，这个就看个人需求了。</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/29/arcyu-fei-arcxia-de-weak-strong-dance/">ARC与非ARC下的Weak-Strong Dance</a></h1>
+      <h1 class="entry-title">ARC与非ARC下的Weak-Strong Dance</h1>
     
     
       <p class="meta">
@@ -158,7 +110,7 @@
   </header>
 
 
-  <div class="entry-content"><h2>ARC</h2>
+<div class="entry-content"><h2>ARC</h2>
 
 <p>在使用block过程中，经常会遇到<code>retain cycle</code>的问题，例如：</p>
 
@@ -307,97 +259,16 @@
 
 <p>将self赋值为<code>__block</code>类型变量，在非ARC中<code>__block</code>类型变量不会进行retain，从而打破retain cycle，然后在使用bself前进行retain，以确保在使用过程中不会dealloc。</p>
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/24/qi-ye-kai-fa-zhe-zheng-shu-xiang-guan-wen-ti-jie-da/">企业开发者证书(In-House Distribution)相关问题解答</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
   
 
+<span class="byline author vcard">Posted by <span class="fn">Edward Yang</span></span>
 
-<time datetime="2013-07-24T16:00:00+08:00" pubdate data-updated="true">2013年07月24日</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><img src="/images/2013/ios_developer_enterprise_program.png">
-最近对企业开发者证书（299刀的）产生了兴趣，查找发现相关资料很少，因此整理了一下相关资料，希望对有同样问题的朋友有所帮助。</p>
-
-<h2>1、是否有分发设备数目限制？</h2>
-
-<p>如果使用<code>Ad-hoc</code>证书是有限制的，100个设备，但用<code>In-House Distribution</code>证书就不存限制了，可以说它是iOS中权限最大的证书（不仅没有分发数目限制，而且可以通过多种途径分发app，更重要的是不需要进行应用程序审核）。</p>
-
-<h2>2、是否需要绑定UDID？</h2>
-
-<p><code>Ad-hoc</code>需要，毕竟只是用于测试目的的。<code>In-House Distribution</code>不需要。</p>
-
-<h2>3、企业开发者证书能在App store发布应用程序吗？</h2>
-
-<p>不能，需要另外购买99刀的开发者证书。</p>
-
-<h2>4、In-House Distribution证书如何分发app？</h2>
-
-<ul>
-<li>将应用程序分发给用户以使用<code>iTunes</code>进行安装。</li>
-<li>让IT管理员使用<code>iPhone 配置实用工具</code>或<code>Apple Configurator</code>将应用程序安装在设备上。</li>
-<li>将应用程序发布到安全 Web 服务器；用户以无线方式访问和执行安装（OTA）。</li>
-<li>使用MDM服务器来指示受管设备安装内部应用程序或 App Store 应用程序（如果MDM服务器支持该功能）。</li>
-</ul>
-
-
-<h2>5、In-House Distribution证书泄露怎办？</h2>
-
-<p>如果泄露，可能导致外部人员使用企业app，此时可以撤销证书，然后生成新证书重新分发app。这样旧证书分发的app就无法使用了。原理是这样的：用户首次打开应用程序时，会通过联系 Apple 的 OCSP 服务器来验证分发证书，OCSP 响应会在设备上缓存一段时间（OCSP 服务器所指定的时间段），一般为 3 天到 7 天之间。在此期间将不会再次检查证书的有效性，直至设备重新启动且缓存的响应过期为止。如果那时收到撤销命令，则应用程序将被阻止运行。</p>
-
-<h2>6、能使用In-House Distribution随意分发app，建立类似第三方App store吗？</h2>
-
-<p>理论上可以，但是这是违反Apple协议的，这是要负法律责任的。一般能申请得到企业开发者证书的都是500人以上具有一定规模的企业，这样的企业不会明目张胆去违反Apple的协议。再说，在上一个问题中说明的证书验证原理表明，Apple有能力监控到一个<code>In-House Distribution</code>分发的app的用户使用情况，当发现有明显异常（随意分发的用户人数肯定远大于公司员工人数），相信Apple不会坐视不管。话又说回来，只是少量的分发给一些客户或个人的话，这也没有什么大碍。因此这完全取决于随意分发的量。</p>
-
-<h2>参考链接</h2>
-
-<ol>
-<li><p><a href="http://developer.apple.com/library/ios/#featuredarticles/FA_Wireless_Enterprise_App_Distribution/Introduction/Introduction.html">Distributing Enterprise Apps for iOS Devices</a></p></li>
-<li><p><a href="http://www.linkedin.com/groups/Has-anyone-had-experience-iOS-72283.S.52864455">Has anyone had experience with the iOS Developer Enterprise program?</a></p></li>
-</ol>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/05/xcodexia-zi-dong-da-bao-wei-ipawen-jian/">xCode下自动打包为ipa文件</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
@@ -409,94 +280,60 @@
   
 
 
-<time datetime="2013-07-05T12:58:00+08:00" pubdate data-updated="true">2013年07月05日</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>最近经常给测试发包，用老办法的话总是先生成app文件，然后拖到iTunes下生成ipa文件，虽然说过程简单，但重复做这么件事总会觉得麻烦。因此用xCode命令行工具提供的<code>xcrun</code>工具写成shell，然后再添加到xCode的工程下，这样就很方便的在每次build之后就能生成相应的ipa文件。shell如下：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/sh</span>
-</span><span class='line'>
-</span><span class='line'>rm -rdf build
-</span><span class='line'>mkdir build
-</span><span class='line'><span class="nb">exec</span> &gt;&amp; build/shell.log
-</span><span class='line'>
-</span><span class='line'>/usr/bin/xcrun -sdk iphoneos PackageApplication -v <span class="s2">&quot;$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app&quot;</span> -o <span class="s2">&quot;$SRCROOT/build/$PRODUCT_NAME.ipa&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>会在工程根目录下生成一个build文件夹，然后会把生成的日志和ipa文件放到文件夹下。
-然后在project下的<code>Build Phase</code>下<code>Add Run Script</code>将shell路径添加进去。
-<img src="/images/2013/add_script_in_xcode.png"></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
+<time datetime="2013-07-29T17:16:00+08:00" pubdate data-updated="true">2013年07月29日</time>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/24/ru-he-zai-da-bao-shi-jiang-wen-jian-fang-ru-documentsmu-lu/">如何在打包时将文件放入Documents目录</a></h1>
-    
-    
-      <p class="meta">
-        
 
-
-
-
-
-
-
-
+<span class="categories">
   
+    <a class='category' href='/blog/categories/ios/'>iOS</a>
+  
+</span>
 
 
-<time datetime="2013-05-24T14:31:00+08:00" pubdate data-updated="true">2013年05月24日</time>
-        
-      </p>
+    </p>
     
-  </header>
-
-
-  <div class="entry-content"><p>今天遇到一个这样的问题，想在打包时将一些文件放进<code>Documents</code>目录下，这样用户能在一开始就能有一些文件可用。像类似于一些阅读类app就经常将几本默认书籍放入<code>Documents</code>目录下。</p>
-
-<p>首先我们来看一下一个应用程序的文件结构：</p>
-
-<p><img src="/images/2013/ios_app_layout.jpg"></p>
-
-<p>如图，可以看出<code>.app</code>文件和<code>Documents</code>文件夹处于同一级，而<code>.app</code>文件正是我们build时打包生成的应用程序文件，我们向project中添加的resource文件也当然只处于<code>.app</code>中。这样，就想到在<code>Info.plist</code>中会不会有这样的设置，可以在应用程序安装时将指定文件添加到<code>Documents</code>目录，很可惜，没有这样的设置。</p>
-
-<p>那么，现在看来，要实现这样的功能就只能曲线救国了，思路如下：</p>
-
-<p>将文件随app一起打包，然后在程序第一次运行时将这些文件通过代码copy到<code>Documents</code>目录下，当然要记录一个状态位，每次去读取这个状态位来进行判断。</p>
+      <div class="sharing">
+  
+  
+  
+  
+    <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+	<span class="jiathis_txt">分享到：</span>
+	<a class="jiathis_button_tsina">新浪微博</a>
+	<a class="jiathis_button_tqq">腾讯微博</a>
+	<a class="jiathis_button_douban">豆瓣</a>
+	<a class="jiathis_button_fb">Facebook</a>
+	<a class="jiathis_button_googleplus">Google+</a>
+	<a class="jiathis_button_twitter">Twitter</a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+	<a class="jiathis_counter_style"></a>
 </div>
-  
-  
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1334815039494995" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" id="UYScript" src="http://v1.uyan.cc/js/iframe.js?UYUserId=1778582" async=""></script>
+<!-- UY END -->
 
-
-    </article>
   
-  <div class="pagination">
-    
-    <a href="/blog/archives">所有文章</a>
-    
-  </div>
 </div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/07/24/qi-ye-kai-fa-zhe-zheng-shu-xiang-guan-wen-ti-jie-da/" title="Previous Post: 企业开发者证书(In-House Distribution)相关问题解答">&laquo; 企业开发者证书(In-House Distribution)相关问题解答</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/09/16/iproxy-tong-guo-usbshi-yong-sshlian-jie-iosshe-bei/" title="Next Post: iproxy-通过USB使用SSH连接iOS设备">iproxy-通过USB使用SSH连接iOS设备 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+</div>
+
 <aside class="sidebar">
   
     <section>
@@ -532,6 +369,7 @@
 
   
 </aside>
+
 
     </div>
   </div>
