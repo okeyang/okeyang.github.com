@@ -91,8 +91,8 @@ github_skip_forks: true
 #delicious_count: 3
 
 # Disqus Comments
-#disqus_short_name:
-#disqus_show_comment_count: false
+disqus_short_name: okeyang
+disqus_show_comment_count: true
 
 # Google Analytics
 #google_analytics_tracking_id:
@@ -101,4 +101,4 @@ github_skip_forks: true
 #facebook_like: false
 
 # Other share
-comment_share: true
+# comment_share: true
