@@ -26,7 +26,7 @@ categories: iOS
 }
 ```
 在block中用到了self，self会被block retain，而\_observer会copy一份该block，就是说\_observer间接持有self，同时当前的self也会retain \_observer，最终导致self持有_observer，\_observer持有self，形成`retain cycle`。
-
+<!-- more -->
 对于在block中的`retain cycle`，在2011 WWDC Session #322 (Objective-C Advancements in Depth)有一个解决方案`weak-strong dance`，很漂亮的名字。其实现如下：
 ```objc
 - (void)dealloc

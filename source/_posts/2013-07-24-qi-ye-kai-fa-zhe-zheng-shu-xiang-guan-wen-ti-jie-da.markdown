@@ -7,7 +7,7 @@ categories: iOS
 ---
 <img src="/images/2013/ios_developer_enterprise_program.png">
 最近对企业开发者证书（299刀的）产生了兴趣，查找发现相关资料很少，因此整理了一下相关资料，希望对有同样问题的朋友有所帮助。
-
+<!-- more -->
 ## 1、是否有分发设备数目限制？
 
 如果使用`Ad-hoc`证书是有限制的，100个设备，但用`In-House Distribution`证书就不存限制了，可以说它是iOS中权限最大的证书（不仅没有分发数目限制，而且可以通过多种途径分发app，更重要的是不需要进行应用程序审核）。

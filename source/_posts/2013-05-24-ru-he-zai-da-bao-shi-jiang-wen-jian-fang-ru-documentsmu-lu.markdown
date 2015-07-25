@@ -7,7 +7,7 @@ categories: iOS
 ---
 
 今天遇到一个这样的问题，想在打包时将一些文件放进`Documents`目录下，这样用户能在一开始就能有一些文件可用。像类似于一些阅读类app就经常将几本默认书籍放入`Documents`目录下。
-
+<!-- more -->
 首先我们来看一下一个应用程序的文件结构：
 
 <img src="/images/2013/ios_app_layout.jpg">

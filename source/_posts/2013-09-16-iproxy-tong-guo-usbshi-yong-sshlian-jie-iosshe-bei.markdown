@@ -8,7 +8,7 @@ categories: iOS 越狱
 越狱之后用到`SSH`时需要通过`Wi-Fi`来连接，输入命令时反应比较慢，还容易掉线，尤其是在越狱开发时，有时会有砸设备、砸Mac的冲动，当然我砸不起，只是想想。
 
 如果能通过USB连接就好了，既不需要依赖`Wi-Fi`，而且速度非常快，感谢开源社区的大牛们，[usbmuxd](http://cgit.sukimashita.com/usbmuxd.git/)开源库就顺带实现了这个功能。
-
+<!-- more -->
 通过[brew](http://brew.sh/)来安装（当然也可以自己去下源码手动安装，由于依赖项比较多，所以很繁琐）
 ``` sh
 brew install usbmuxd

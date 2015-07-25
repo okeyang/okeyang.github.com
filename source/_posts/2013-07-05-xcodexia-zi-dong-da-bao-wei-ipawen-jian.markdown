@@ -7,6 +7,7 @@ categories: iOS
 ---
 
 最近经常给测试发包，用老办法的话总是先生成app文件，然后拖到iTunes下生成ipa文件，虽然说过程简单，但重复做这么件事总会觉得麻烦。因此用xCode命令行工具提供的`xcrun`工具写成shell，然后再添加到xCode的工程下，这样就很方便的在每次build之后就能生成相应的ipa文件。shell如下：
+<!-- more -->
 ``` sh
 #!/bin/sh
 
