@@ -1,26 +1,609 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Edward Yang的博客]]></title>
-  <link href="http://yang6512.github.io/atom.xml" rel="self"/>
-  <link href="http://yang6512.github.io/"/>
-  <updated>2015-02-12T11:49:34+08:00</updated>
-  <id>http://yang6512.github.io/</id>
+  <title><![CDATA[okeyang's blog]]></title>
+  <link href="http://okeyang.github.io/atom.xml" rel="self"/>
+  <link href="http://okeyang.github.io/"/>
+  <updated>2016-10-10T00:36:18+08:00</updated>
+  <id>http://okeyang.github.io/</id>
   <author>
-    <name><![CDATA[Edward Yang]]></name>
+    <name><![CDATA[okeyang]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
   
   <entry>
+    <title type="html"><![CDATA[Xcode8新增Debug方法]]></title>
+    <link href="http://okeyang.github.io/blog/2016/10/07/xcode8xin-zeng-debugfang-fa/"/>
+    <updated>2016-10-07T23:25:00+08:00</updated>
+    <id>http://okeyang.github.io/blog/2016/10/07/xcode8xin-zeng-debugfang-fa</id>
+    <content type="html"><![CDATA[<p>今年的WWDC介绍了不少新的调试方法，可以更加快捷便利的定位问题、分析问题、解决问题，下面就简单介绍一下。</p>
+
+<h2>循环布局检测</h2>
+
+<p>当你进入某个界面或点击某个按钮后，发现屏幕不再响应事件，然后进入无限等待，debug下可以看到CPU满负荷，RAM也不断增加，那么有可能就进入了循环布局状态。</p>
+
+<h4>举个栗子</h4>
+
+<p>先说一个简单的循环布局的case，如下图所示。</p>
+
+<p><img src="http://okeyang.github.io/images/2016/auto_layout_loop.png"></p>
+
+<p>最底下的subview A在layout时更新superview B的<code>bounds</code>，B因为不在layout状态，所以会使superview B调用其superview C的<code>setNeedsLayout()</code>方法，然后进入layout状态，此时C重置B的<code>bounds</code>，B又使A再次layout。因为对B的<code>bounds</code>设置不一致，导致循环下去。</p>
+
+<!-- more -->
+
+
+<h4>检测方法</h4>
+
+<p>可在<code>Launch Arguments</code>中添加<code>UIViewLayoutFeedbackLoopDebuggingThreshold</code>，设置循环布局阀值，如100，然后当循环布局次数超过阀值时会抛出异常，此时通过<code>po [_UIViewLayoutFeedbackLoopDebugger layoutFeedbackLoopDebugger]</code>可输出详细信息。</p>
+
+<p><img src="http://okeyang.github.io/images/2016/auto_layout_loop_threshold.png"></p>
+
+<h2>parray poarray</h2>
+
+<p>看名字就能猜到，这是针对数组的打印信息命令。在传统的C数组中，是无法通过数组本身知道其长度的，所以一直以来<code>lldb</code>都不能很好的打印C数组，<code>parray</code>和<code>poarray</code>解决了这个痛点，可以通过指定打印个数来打印数组的多个内容。</p>
+
+<blockquote><p>需要注意的是这两个命令都是针对C数组的，区别是以<code>p</code>还是<code>po</code>的方式打印数组内容。另外只能打印堆空间存储的数组。</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="c1">// 以&quot;p&quot;方式打印内容</span>
+</span><span class='line'><span class="n">parray</span> <span class="mi">3</span> <span class="n">intArray</span>
+</span><span class='line'><span class="n">parray</span> <span class="err">`</span><span class="n">count</span><span class="err">`</span> <span class="n">intArray</span>    <span class="c1">// &quot;count&quot;为代码中变量</span>
+</span><span class='line'><span class="c1">// 以&quot;po&quot;方式打印内容</span>
+</span><span class='line'><span class="n">poarray</span> <span class="mi">3</span> <span class="n">objectArray</span>
+</span><span class='line'><span class="n">poarray</span> <span class="err">`</span><span class="n">count</span><span class="err">`</span> <span class="n">objectArray</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>register read</h2>
+
+<p><code>register</code>命令并不是新增的，一直以来都有，但在WWDC2016<code>Session 417 Debugging Tips and Tricks</code>中重点说了一下，实为解决一类疑难bug的利器，在这里也简单介绍下。</p>
+
+<p>平时是否有过crash在没有源码的第三方库或系统库中，而检查自己代码又没有发现任何问题？那么试试<code>register</code>命令吧，可能会有意向不到的效果。</p>
+
+<p>通过<code>register read</code>可以读取当前状态下寄存器存储的变量，在没有源码的情况下运气好就可以获取到一些非常有用的信息，毕竟很有可能是你传入的某个错误值导致的最终crash，而这个值就可能从寄存器中取到，从而快速定位原因。</p>
+
+<p><code>register</code>还有一个非常有用的特性，当刚进入某一函数时，可通过<code>register read $arg1 $arg2 ...</code>读取函数的各个参数值，如下：</p>
+
+<p><img src="http://okeyang.github.io/images/2016/register_read.png"></p>
+
+<h2>启动各过程耗时检测</h2>
+
+<p>在WWDC2016<code>Session 406 Optimizing App Startup Time</code>中，详细介绍了App启动，即进入<code>main()</code>函数前做了什么事儿，以及如何优化各个过程，另外提供了<code>DYLD_PRINT_STATISTICS</code>环境变量方便测试各个过程耗时。</p>
+
+<p><img src="http://okeyang.github.io/images/2016/startup_time1.png"></p>
+
+<p>然后在启动时会打印如下所示信息：</p>
+
+<p><img src="http://okeyang.github.io/images/2016/startup_time2.png"></p>
+
+<p>Apple工程师给出的建议是：</p>
+
+<blockquote><p>在最新的设备下，启动时间控制在<code>400ms</code>以内</p></blockquote>
+
+<p>如果你的App不达标，那么就开始着手优化吧！具体各个过程的优化原理及方法，限于篇幅就不再介绍了，感兴趣可以看看<a href="https://developer.apple.com/videos/wwdc/2016/?id=406">Session 406 Optimizing App Startup Time</a>。</p>
+
+<h2>runtime issue</h2>
+
+<p>Xcode8新增了运行时问题的检查，如下：</p>
+
+<p><img src="http://okeyang.github.io/images/2016/runtime_issue.png"></p>
+
+<p><code>runtime issue</code>主要分为3类：</p>
+
+<ul>
+<li>线程问题，加入了<code>Thread Sanitizer</code>检测线程问题</li>
+<li>UI布局问题，主要是约束冲突</li>
+<li>内存问题，检测内存泄露</li>
+</ul>
+
+
+<h2>Thread Sanitizer</h2>
+
+<p>继<code>Address Sanitizer</code>之后，Xcode8中加入<code>Thread Sanitizer</code>用于检查一些线程问题，并会显示在<code>runtime issue</code>列表中，使用<code>Thread Sanitizer</code>需如下图所示开启，重新编译运行后即可。</p>
+
+<p><img src="http://okeyang.github.io/images/2016/thread_sanitizer.png"></p>
+
+<p><code>Thread Sanitizer</code>主要检测以下问题：</p>
+
+<ul>
+<li>使用了未初始化的<code>mutexes</code></li>
+<li>Thread leaks，如缺少<code>pthread_join</code></li>
+<li>在signal handlers中的不安全调用，如调用<code>malloc</code></li>
+<li>在错误的线程中做unlock</li>
+<li>最重要的一点：<code>Data races</code>问题</li>
+</ul>
+
+
+<p>凡是通过<code>Thread Sanitizer</code>检查出来问题，都代表着有很严重的隐患，那么，赶快修复吧！</p>
+
+<h2>Static Analysis</h2>
+
+<p>Xcode8对<code>Static Analysis</code>做了近一步加强，新增以下问题检测：</p>
+
+<ul>
+<li>本地化检查</li>
+<li>内存泄漏检查</li>
+<li>Nullability检查</li>
+</ul>
+
+
+<h4>本地化检查</h4>
+
+<p>首先需要如下方式开启，<code>Static Analysis</code>将会检查<code>UI元素</code>的文字设置是否使用了<code>NSLocalizedString</code>。</p>
+
+<p><img src="http://okeyang.github.io/images/2016/localizability.png"></p>
+
+<h4>内存泄漏检查</h4>
+
+<p>主要检查的是<code>dealloc</code>中内存的释放。这个功能来的有点晚，是一个给<code>MRC</code>使用的功能，在<code>ARC</code>基本普及的今天已经显得不是太重要了，当时没能雪中送炭，如今只能锦上添花了。</p>
+
+<p><img src="http://okeyang.github.io/images/2016/dealloc_release.png"></p>
+
+<h4>Nullability检查</h4>
+
+<p>这项检查是针对设置<code>nonnull</code>的<code>property</code>或<code>返回值</code>。当设置为<code>nonnull</code>，但返回值可能为<code>nil</code>时则会有相应warning。</p>
+
+<p><img src="http://okeyang.github.io/images/2016/nullability.png"></p>
+
+<h2>参考链接</h2>
+
+<ol>
+<li><a href="https://developer.apple.com/videos/wwdc/2016/?id=236">Section 236 What’s New in Auto Layout</a></li>
+<li><a href="https://developer.apple.com/videos/wwdc/2016/?id=406">Section 406 Optimizing App Startup Time</a></li>
+<li><a href="https://developer.apple.com/videos/wwdc/2016/?id=410">Section 410 Visual Debugging with Xcode</a></li>
+<li><a href="https://developer.apple.com/videos/wwdc/2016/?id=412">Section 412 Thread Sanitizer and Static Analysis</a></li>
+<li><a href="https://developer.apple.com/videos/wwdc/2016/?id=417">Section 417 Debug Tips and Tricks</a></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[《深入解析Mac OS X &amp; iOS操作系统》读书笔记]]></title>
+    <link href="http://okeyang.github.io/blog/2015/07/24/shen-ru-jie-xi-mac-os-x-and-ioscao-zuo-xi-tong--du-shu-bi-ji/"/>
+    <updated>2015-07-24T16:44:00+08:00</updated>
+    <id>http://okeyang.github.io/blog/2015/07/24/shen-ru-jie-xi-mac-os-x-and-ioscao-zuo-xi-tong&#8211;du-shu-bi-ji</id>
+    <content type="html"><![CDATA[<p>本书对<code>OS X</code>和<code>iOS</code>的底层细节讲的非常详细，各方面都有所涉及，对于深入了解<code>OS X</code>和<code>iOS</code>有很大帮助。对于一般App开发人员来说，我感觉本书内容并不太适合，所以完全以扩充知识面的目标读完本书，以下是以我所关心的内容整理的读书笔记，希望对大家有所帮助。另附<a href="http://www.amazon.cn/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90Mac-OS-X-iOS%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E8%8E%B1%E6%96%87/dp/B00JFJTE86/ref=sr_1_1?s=books&amp;ie=UTF8&amp;qid=1437822172&amp;sr=1-1">亚马逊购买地址</a>方便感兴趣的朋友:)</p>
+
+<h2>第一章 达尔文主义：OS X的进化史</h2>
+
+<ol>
+<li>OS X是<code>Mac OS Classic</code>和<code>NeXTSTEP</code>的融合。</li>
+<li><code>Darwin</code>是操作系统的类UNIX核心，由kernel、XNU和运行时组成，是OS X和iOS的重要组成部分，OS X的<code>Darwin</code>是开源的，除OS X10.0对应Darwin 1.3.x之外，其他版本都符合：<code>if (OSX.version == 10.x.y) Darwin.version = (4+x).y</code></li>
+<li>从10.3（Panther）开始，苹果开发了<code>Safari</code>替代<code>IE for Mac</code>；从10.4.4（Tiger）开始，支持<code>Intel x86架构</code>；10.5（Leopard）有了<code>Objective-C 2.0</code>；10.6（Snow Leopard）开始完整支持64位，提供<code>GCD</code>，完全抛弃<code>PPC架构</code>。</li>
+<li>iOS和OS X对比：
+
+<ul>
+<li>iOS基于<code>ARM</code>架构，而OS X基于Intel <code>i386</code>和<code>x86_64</code>。</li>
+<li>iOS内核代码依然闭源，OS X内核<code>XNU</code>则是开源的。</li>
+<li>iOS内核的编译稍有不同，关注的是嵌入式特性和一些新的API。</li>
+<li>iOS的系统GUI是<code>SpringBoard</code>，OS X为<code>Aqua</code>。</li>
+<li>iOS的内存管理要紧凑得多，因为移动设备没有几乎无穷的交换空间可以使用。</li>
+<li>iOS应用程序不允许访问底层UNIX API（即Darwin），也没有root访问权限，而且只能访问自己的目录内数据。</li>
+</ul>
+</li>
+</ol>
+
+
+<!-- more -->
+
+
+<h2>第二章 合众为一：OS X和iOS的架构</h2>
+
+<ol>
+<li>OS X和iOS层次结构：
+
+<ul>
+<li>用户体验层：包括<code>Aqua</code>、<code>Dashboard</code>、<code>Spotlight</code>和<code>辅助功能（Accessibility）</code>，iOS中为<code>SpringBoard</code>同时支持<code>Spotlight</code></li>
+<li>应用框架层：包括<code>Cocoa</code>、<code>Carbon</code>和<code>Java</code>，而在iOS中只有<code>Cocoa（Cocoa Touch）</code></li>
+<li>核心框架：也称为图形和媒体层。包括<code>核心框架</code>、<code>Open GL</code>和<code>QuickTime</code></li>
+<li>Darwin：操作系统核心，包括<code>内核</code>和<code>UNIX shell环境</code><br/>
+<img src="http://okeyang.github.io/images/2015/OSX_iOS_architecture.png" width="50%" height="50%"></li>
+</ul>
+</li>
+<li>Darwin架构：<br/>
+<img src="http://okeyang.github.io/images/2015/darwin_architecture.png" width="50%" height="50%"></li>
+<li>GUI是由第一个用户态进程<code>launchd</code>启动的，支持GUI工作的主进程是<code>WindowServer</code></li>
+<li><code>Carbon</code>是OS 9遗留编程接口的名称，已废弃</li>
+<li>XNU包含组件：<code>Mach微内核</code>、<code>BSD层</code>、<code>linkern</code>、<code>I/O Kit</code></li>
+</ol>
+
+
+<h2>第三章 站在巨人的肩膀上：OS X和iOS使用的技术</h2>
+
+<ol>
+<li><code>kqueue</code>是BSD中使用的内核事件通知机制，一个<code>kqueue</code>指的是一个描述符，这个描述符会阻塞等待直到一个特定类型和种类的事件发生。如监视文件、Mach port、套接字、发给进程的特定信号、纳秒级定时器、虚拟内存相关通知、vnode相关。</li>
+<li><code>强制访问控制（MAC）</code>，FreeBSD 5.x最早引入，是OS X<code>隔离机制（Sandboxing，沙盒机制）</code>和iOS的<code>entitlement机制</code>基础。</li>
+<li>OS X 10.4（Tiger）引入新的日志模型：<code>Apple System Log（ASL）</code>，目标是提供比传统UNIX日志syslog更为灵活的功能。</li>
+<li><code>FSEvents</code>提供了文件系统通知的API，和Linux的<code>inotify</code>类似。</li>
+<li>沙盒架构：<br/>
+<img src="http://okeyang.github.io/images/2015/sandbox_architecture.png"></li>
+</ol>
+
+
+<h2>第四章 庖丁解进程：Mach-O格式、进程以及线程内幕</h2>
+
+<ol>
+<li>UNIX进程生命周期:<br/>
+<img src="http://okeyang.github.io/images/2015/UNIX_process_life_cycle.png"></li>
+<li>OS X目前支持三种可执行格式：
+
+<ul>
+<li>解释器脚本格式（以#!后的命令运行脚本，魔数:<code>#!</code>）</li>
+<li>通用二进制格式（胖二进制格式，魔数：小尾<code>0xcafebabe</code>,大尾<code>0xbebafeca</code>）</li>
+<li>Mach-O格式（OS X原生二进制格式，魔数：32位<code>0xfeedface</code>,64位<code>0xfeedfacf</code>）,系统根据魔数类型加载执行文件。</li>
+</ul>
+</li>
+<li>通用二进制格式本质就是各种架构的二进制文件的打包文件，通过文件头的信息以加载匹配当前架构的二进制文件。</li>
+<li>OS X上几乎所有的程序都是动态链接的，默认使用<code>dyld</code>作为动态链接器，这是一个用户态进程，不属于内核。</li>
+<li>32位OS X系统中，用户态和内核态都有完整的4GB地址空间，代价是地址空间切换需要刷新CR3和TLB</li>
+<li><code>__PAGEZERO段</code>，32位为一个页（4K），64位为4GB。为方便捕获空指针和将整数当做指针引用。</li>
+<li>OS X中main函数有额外参数apple:</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">void</span> <span class="n">main</span> <span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">envp</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">apple</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>第五章 进程跟踪和调试</h2>
+
+<ol>
+<li>OS X对<code>DTrace</code>支持较为完整，而iOS没有，需使用<code>CHUD</code>或<code>AppleProfileFamily</code></li>
+<li>获取进程信息系统调用：<code>sysctl</code>、<code>proc_info</code></li>
+<li>使用未文档化的<code>stack_snapshot</code>系统调用，可以捕获指定进程中所有的线程状态。</li>
+<li>OS X和iOS都没有使用核心转储文件，而是使用<code>Crash Reporter</code>生成崩溃日志，用以调试应用程序崩溃。</li>
+<li>OS X和iOS可将异常端口绑定至BSD进程底层的Mach任务，可很容易实现当应用程序崩溃时自动运行另一个程序。而在UNIX中，很难简单实现，因为只有父进程能收到子进程的死亡通知。</li>
+<li>可使用<code>heap</code>、<code>leaks</code>、<code>malloc_history</code>工具调试内存泄漏。</li>
+</ol>
+
+
+<h2>第六章 引导过程：EFI和iBoot</h2>
+
+<ol>
+<li>大部分PC使用<code>BIOS</code>引导（Windows），OS X使用<code>EFI</code>引导，iOS使用<code>iBoot</code>引导</li>
+<li>EFI服务提供<code>引导服务</code>和<code>运行时服务</code>，前者只能只能在EFI模式下使用，后者在退出EFI模式，即操作系统加载后也能使用，I/O Kit重度使用。</li>
+<li>EFI引导完成后得到最终的<code>BootStruct</code>，将其和控制权交给内核完成引导。</li>
+<li>iOS引导过程：（除引导ROM外，其他步骤都是加密且数字签名的。）<br/>
+<img src="http://okeyang.github.io/images/2015/iOS_boot_process.png"></li>
+</ol>
+
+
+<h2>第七章 launchd</h2>
+
+<ol>
+<li>OS X和iOS中的<code>launchd</code>对应UN*X系统中的<code>init</code>，但相对<code>init</code>有许多改进。包含了如atd、crond、inetd/xinetd等daemon，支持事务、autorun和文件系统观察，整合I/O Kit。</li>
+<li>launchd区分两种后台作业：
+
+<ul>
+<li>守护程序（daemon）：和用户没有交互，不考虑是否有用户登录系统。</li>
+<li>代理程序（agent）：可以和用户有交互，只有在用户登录时启动。</li>
+</ul>
+</li>
+<li>iOS中的<code>lockdownd</code>，负责处理设备激活、备份、崩溃报告、设备同步等。</li>
+<li>OS X中的GUI shell是<code>Finder</code>，iOS为<code>SpringBoard</code>。</li>
+<li><code>XPC</code>是Lion和iOS5新引入的轻量级进程间通信原语，目前闭源。</li>
+</ol>
+
+
+<h2>第八章 内核架构</h2>
+
+<ol>
+<li>内核架构设计类型有<code>巨内核</code>（UNIX、Linux）、<code>微内核</code>（Mach）、<code>混合内核</code>（XNU、Windows）。</li>
+<li>内核态、用户态转换分为自愿转换、非自愿转换。
+
+<ul>
+<li>自愿转换：使用内核服务，即系统调用。</li>
+<li>非自愿转换：发生异常、中断或处理器陷阱时。</li>
+</ul>
+</li>
+<li>XNU中系统调用有4种：<code>UNIX</code>、<code>MACH</code>、<code>MDEP</code>（机器相关调用）、<code>DIAG</code>（诊断调用）</li>
+<li>32位系统下，UNIX系统调用编号为正数，MACH为负数，64位则都为正数，最高位字节包含调用类型。</li>
+</ol>
+
+
+<h2>第九章 由生到死——内核引导和内核崩溃</h2>
+
+<ol>
+<li>XNU源码中，所有函数的实现都将函数名放在行头，即返回值在上一行，这是为了方便搜索。</li>
+<li>pid 0是内核进程<code>kernel_task</code>（准确说0表示没有pid），<code>launchd</code>是第一个用户态进程，pid为1。</li>
+<li>可通过<code>KDP</code>协议远程调试内核。</li>
+</ol>
+
+
+<h2>第十章 Mach原语：一切以消息为媒介</h2>
+
+<ol>
+<li>Mach的最主要目标就是将所有功能移出内核，放在用户态中，将内核保持在极简状态。</li>
+<li>Mach同步原语：<code>互斥体</code>、<code>自旋锁</code>、<code>信号量</code>、<code>锁集</code>。其中信号量和锁集在用户态下可见。</li>
+<li>Mach的机器层原语：<code>主机（host）</code>、<code>时钟</code>、<code>处理器</code>和<code>处理器集的抽象</code>。</li>
+</ol>
+
+
+<h2>第十一章 Mach调度</h2>
+
+<ol>
+<li>线程是Mach中最小执行单元，线程是包含在<code>任务（task）</code>中的。</li>
+<li>Mach内核中没有BSD进程概念，而是以任务表示，一个BSD进程对应一个底层Mach任务对象，<code>kernel_task</code>即是Mach对于内核的表示。</li>
+<li>Mach允许创建<code>远程线程</code>，即可以在一个任务中创建另一个任务的线程，Windows也可以实现，而UNIX和Linux不支持这种功能。</li>
+<li>Mach调度优先级有128个，Windows为32个，Linux为140个。其中数字越大，优先级越高。</li>
+<li><code>控制权转交（handoff）</code>：Mach调度器允许线程主动放弃CPU，并指定某个特定线程运行。</li>
+<li><code>可使用续体（continuation）</code>：线程可丢弃自己的栈，系统恢复时不需要恢复线程栈，可以明显加快上下文切换速度，此项特性在Mach中应用广泛。</li>
+<li>通过<code>异步软件陷阱（AST）</code>可使内核响应外带事件，如调度事件，BSD信号基于此实现。</li>
+<li><code>launchd</code>注册异常端口，其子进程也继承同样端口，<code>崩溃报告器（crash reporter）</code>会接受此端口发出的异常，会当发生crash时，崩溃报告器会自动根据需要启动。</li>
+</ol>
+
+
+<h2>第十二章 Mach虚拟内存</h2>
+
+<ol>
+<li>Mach的虚拟内存子系统主要分两层：<code>虚拟内存层</code>（机器无关）、<code>物理内存层</code>（机器相关）。</li>
+<li>Mach中<code>zone</code>的概念相当于Linux的<code>memory cache</code>和Windows的<code>Poll</code>。</li>
+<li><code>zone</code>是一种内存区域，用于快速分配和释放频繁的固定大小的对象。例如，可使用<code>zprint kalloc</code>查看<code>kalloc</code>的<code>zone</code>。</li>
+<li>Mach的分页器主要有：<code>Default分页器</code>、<code>VNode分页器</code>、<code>Device分页器</code>、<code>Swapfile分页器</code>、<code>Apple-protected分页器</code>、<code>Freezer分页器</code>（iOS）。</li>
+<li>分页器只是提供分页操作，不决定具体调度，调度由<code>pageout</code>守护线程执行。</li>
+</ol>
+
+
+<h2>第十三章 BSD层</h2>
+
+<ol>
+<li>OS X有<code>UNIX03</code>认证，达到源码级兼容，即提供与UNIX统一的API。</li>
+<li>BSD层在Mach层之上，提供了<code>POSIX API</code>。但XNU的BSD不是完整的BSD，即移植部分BSD内容，如<code>VFS</code>和<code>网络架构</code>。</li>
+<li>BSD的进程和线程都是在Mach提供原语的基础上进行了封装，BSD进程和线程对应有Mach的任务和线程。</li>
+<li>XNU中内核线程都是Mach线程，没有对应的BSD线程，同样内核任务<code>kernel_task</code>也没有对应的进程（因此其pid为0，表示没有进程pid）。</li>
+<li>UNIX模型中，进程不能被“创建”出来，只能通过<code>fork()</code>系统调用复制出来。<code>vfork</code>、<code>fork</code>、<code>posix_spawn</code>系统调用，底层都是由<code>fork1()</code>实现，只是传入参数不同。</li>
+<li>除了<code>DTrace</code>，XNU在BSD层还提供了其他UNIX具有的<code>ptrace</code>，但功能大大缩水，如不能读写其他进程内存。</li>
+<li>Mach通过<code>异常机制</code>处理底层的陷阱，BSD则在<code>异常机制</code>之上构建了<code>信号处理机制</code>。操作系统和用户产生的信号先被Mach转换为异常，然后再由BSD产生信号。</li>
+</ol>
+
+
+<h2>第十四章 有新有旧：BSD高级功能</h2>
+
+<ol>
+<li>OS X和iOS低内存处理机制称为<code>Jetsam</code>，或<code>Memorystatus</code>。用于杀掉消耗过多太多内存的进程并抛弃占用内存。</li>
+<li>iOS中，<code>Jetsam/Memorystatus</code>和默认的<code>freezer</code>结合使用，实现内存冷冻而不是杀死。</li>
+<li>从Mountain Lion和iOS6开始，实行<code>内核地址空间布局随机化（KASLR）</code>，以提高系统安全性。</li>
+<li><code>工作队列（work queue）</code>，作用是为应用程序提供多线程支持并扩展到多处理器支持，为<code>GCD</code>提供了基础。</li>
+<li>MAC是从TrustdBSD引入的强大安全特性，在OS X主要体现在<code>沙盒机制</code>，在iOS中主要体现为<code>entitlement机制</code>。</li>
+<li><code>sandbox</code>将所有第三方应用限制为只能访问自己的目录；<code>AppleMobileFileIntegrity.kext</code>（用户态守护进程amfid）负责杀掉任何代码签名不正确的进程。</li>
+</ol>
+
+
+<h2>第十五章 文件系统和虚拟文件系统交换</h2>
+
+<ol>
+<li>XUN的<code>文件系统</code>是在BSD层实现的，使用了来自Solaris的<code>VFS框架</code>（已成为UNIX内核与文件系统实现之间的标准接口）。</li>
+<li>OS X传统上支持3种分区方案：<code>主引导记录（MBR）</code>、<code>Apple Partition Map（APM）</code>、<code>GUID分区表（GPT）</code>。</li>
+<li><code>MBR</code>是除OS X和64位Windows之外其他操作系统的默认分区方案，以磁盘第一扇区为引导扇区。</li>
+<li><code>APM</code>是苹果设计用来取代<code>MBR</code>的，现只存于PPC的Mac和iPad Classic和Nano中。</li>
+<li>在苹果普遍使用的是<code>GPT</code>（包括iOS），属于EFI规范的一部分。</li>
+<li><code>LwVM</code>是苹果的私有分区方案，继承自GPT，用于iOS5默认分区方案，它允许分区加密。</li>
+<li><code>CoreStorage</code>是Lion新引入的分区类型，给OS X带来了逻辑卷管理的支持，支持全盘加密，只能创建在<code>GPT</code>驱动器上。</li>
+<li>所有文件系统都提供了同样的原语，内核对文件的接口称为<code>虚拟文件系统交换（VFS）</code>。Mac原生的文件系统为<code>HFS</code>（已废弃）、<code>HFS+</code>。</li>
+<li>即插即用是由守护进程<code>diskarbitrationd</code>实现，由launchd启动。</li>
+<li><code>DMG</code>格式，即磁盘镜像文件，包含了整个文件系统，属于苹果私有格式。从Lion开始，允许指定<code>DMG</code>文件用作根文件系统，如安装系统时。</li>
+</ol>
+
+
+<h2>第十六章 基于B树的HFS+文件系统</h2>
+
+<ol>
+<li>DOS原生文件系统为<code>FAT</code>，Windows是<code>NTFS</code>，Linux是<code>Ext2/3/4</code>，OS X为<code>HFS+</code>，iOS为<code>HFSX</code>。</li>
+<li>HFS+通过支持<code>扩展属性</code>来支持<code>访问控制表(ACL)</code>（精确设置任何用户任何组的具体权限）。</li>
+<li><code>扩展属性</code>可以添加很多额外信息，如文件件的颜色标签、文件下载来源等，可通过<code>ls -l@</code>或<code>xattr</code>查看，但像文件压缩、ACL则在这些命令中被屏蔽了，需要更底层的方法查看。</li>
+<li>系统中有很多文件是通过<code>HFS+</code>的压缩属性进行压缩的，如常用的ls命令。可通过ls的-O参数查看。</li>
+<li><code>HFS+</code>使用的UTF-16编码，文件名最长255个字符。</li>
+<li><code>HFS+</code>是大小写不敏感的，但保留大小写，而现版本的<code>HFSX</code>只是在<code>HFS+</code>的基础上变为大小写敏感。</li>
+<li><code>HFS+</code>使用6个特殊文件维护数据：<code>编录（catalog）B树</code>、<code>属性B树</code>、<code>extent溢出B树</code>、<code>热文件B树</code>、<code>分配文件</code>、<code>启动文件</code>。</li>
+</ol>
+
+
+<h2>第十七章 遵守协议：网络协议栈</h2>
+
+<ol>
+<li>苹果原本使用自己的<code>AppleTalk</code>网络协议栈，后放弃才采用<code>TCP/IP</code>。至今仍使用的<code>Bonjour协议</code>和<code>AFP协议</code>都是<code>AppleTalk</code>的遗产。</li>
+<li><code>网络驱动程序套接字(PF_NDRV)</code>（苹果特有），支持用户态下深入数据链路层直接修改原始数据包。</li>
+<li><code>系统套接字(PF_SYSTEM)</code>（苹果特有），提供了一种内核空间和用户空间通信的方法。</li>
+<li>套接字在内核中是个巨大的数据结构，内核需要维护套接字和文件描述符的映射关系。</li>
+<li>XNU支持的网络层协议有：<code>IPv4</code>、<code>IPv6</code>、<code>AppleTalk</code>。</li>
+<li>在网络接口层，<code>lo接口</code>是唯一必须存在的，且属于原生支持接口；<code>en接口</code>（以太网或802.11接口）、<code>fw接口</code>（IP over FireWire）、<code>pdp_ip接口</code>（蜂窝数据连接）、<code>ppp接口</code>（Point-to-Point协议）都不是XNU原生支持的，而是通过内核扩展来创建的。</li>
+<li><p><code>utun</code>是特殊的原生支持接口，使用的是<code>系统套接字（PF_SYSTEM）</code>，<code>VPN</code>和其他进程通过这个接口提供一个伪接口，这个伪接口的流量都会重新引导到用户态进程。<code>utun</code>发送数据包：<br/>
+<img src="http://okeyang.github.io/images/2015/utun_send_data.png"></p></li>
+<li><p>XNU支持一下数据包过滤机制，著名的<code>TCPDump</code>就是基于<code>BPF过滤机制</code>实现的。<br/>
+不同数据包过滤机制的比较：<br/>
+<img src="http://okeyang.github.io/images/2015/packet_filtering_compare.png"></p></li>
+</ol>
+
+
+<h2>第十六章 内核扩展模块</h2>
+
+<ol>
+<li>OS X和iOS使用<code>kernelcache</code>预链接kext，<code>kernelcache</code>可以签名、加密（iOS就加密了）。</li>
+<li><code>kernelcache</code>在OS X下是动态创建的，以加快引导进程；iOS中则是由苹果提供的一个固定的文件，不同iDevice是不一样的。</li>
+<li>OS X中大部分和kext的接口工作是由守护进程<code>kextd</code>完成的，以Mach消息通信，而iOS不存在。</li>
+<li>内核内置组件会以<code>伪kext</code>的形式出现在kext列表中。</li>
+</ol>
+
+
+<h2>第十七章 驱动力——I/O Kit驱动程序框架</h2>
+
+<ol>
+<li>XNU使用C++开发驱动程序，其运行时环境称为<code>I/O Kit</code>，是一套几乎自包含的编程环境，可方便的通过面向对象的特性开发驱动程序。</li>
+<li><code>libkern C++</code>运行时是<code>I/O Kit</code>的基础，定义了所有<code>I/O Kit</code>驱动程序都可使用的基础类，如OSObject、OSMetaClass、OSArray、OSDictionary、OSString等。</li>
+<li><code>I/O Kit</code>维护了一个保存所有对象及对象间关系最新信息的数据库，称之为<code>I/O Registy</code>。</li>
+<li><code>I/O Kit</code>所有驱动程序都是从公共祖先<code>IOService</code>继承而来的对象。</li>
+<li><code>I/O Kit</code>的驱动程序分为两种：<code>驱动程序（driver）</code>和<code>节点（nub）</code>，节点就是指两个驱动程序之间的适配器，表示被控制的设备。</li>
+<li><code>I/O Kit</code>驱动程序状态机：<br/>
+<img src="http://okeyang.github.io/images/2015/IOKit_driver_state_machine.png"></li>
+</ol>
+
+
+<p>OVER！</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Alfred配置]]></title>
+    <link href="http://okeyang.github.io/blog/2015/07/15/alfredpei-zhi/"/>
+    <updated>2015-07-15T22:45:00+08:00</updated>
+    <id>http://okeyang.github.io/blog/2015/07/15/alfredpei-zhi</id>
+    <content type="html"><![CDATA[<p>一直使用<a href="http://www.alfredapp.com">Alfred</a>这款神器，为了将效率更提升一步，最近一狠心，买了的<a href="http://www.alfredapp.com/powerpack/">Powerpack</a>，对于每项配置的具体介绍推荐读一下这篇文章：<a href="http://wellsnake.com/jekyll/update/2014/06/15/001/">丢掉鼠标－Mac神软Alfred使用手册1</a>。下面重点说一下我的<code>Web Search</code>和<code>Workflows</code>配置。</p>
+
+<h2>Web Search</h2>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_web_search.png" width="75%" height="75%"></p>
+
+<p>尽可能把会使用到的搜索地址添加进来，这样就可以尽可能使用<code>Alfred</code>作为入口，提升效率，以下是我自行添加的搜索地址URL</p>
+
+<!-- more -->
+
+
+<h5>Github</h5>
+
+<p><code>https://github.com/search?utf8=%E2%9C%93&amp;q={query}</code> <br/>
+需勾选<code>Encode spaces as +</code></p>
+
+<h5>Stackoverflow</h5>
+
+<p><code>http://stackoverflow.com/search?q={query}</code><br/>
+需勾选<code>Encode spaces as +</code></p>
+
+<h5>百度</h5>
+
+<p><code>https://www.baidu.com/s?wd={query}</code></p>
+
+<h5>百度百科</h5>
+
+<p><code>http://baike.baidu.com/search/word?word={query}</code></p>
+
+<h5>百度图片</h5>
+
+<p><code>http://image.baidu.com/i?z=&amp;s=1&amp;ct=201326592&amp;cl=2&amp;lm=-1&amp;tn=baiduimage&amp;ie=utf-8&amp;word={query}</code></p>
+
+<h5>知乎</h5>
+
+<p><code>http://www.zhihu.com/search?q={query}&amp;type1=all</code></p>
+
+<h5>天猫</h5>
+
+<p><code>http://list.tmall.com/search_product.htm?q={query}</code></p>
+
+<h5>淘宝</h5>
+
+<p><code>http://s.taobao.com/search?q={query}</code></p>
+
+<h5>京东</h5>
+
+<p><code>http://search.jd.com/Search?keyword={query}&amp;enc=utf-8</code></p>
+
+<h2>Workflows</h2>
+
+<h4><a href="https://github.com/yang6512/alfredworkflows/raw/master/Google%20Suggest.alfredworkflow">Google Suggest</a></h4>
+
+<p>直接使用的Examples里面的，在此基础上稍微做了下改进，修复了一些bug，还支持<code>tab</code>自动补全，可以在搜索建议结果未返回时直接搜索内容。</p>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_google_suggest.png" width="50%" height="50%"></p>
+
+<p>如果使用代理服务器，可以通过修改源码实现，点击如下所示<code>Open workflow folder</code></p>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_open_workflow_folder.png" width="50%" height="50%"></p>
+
+<p>然后编辑workflows.php，找到</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">public function request( $url=null, $options=null )</span>
+</span><span class='line'><span class="x">{</span>
+</span><span class='line'><span class="x">    ...</span>
+</span><span class='line'><span class="x">    $defaults = array(                          // Create a list of default curl options</span>
+</span><span class='line'><span class="x">        CURLOPT_RETURNTRANSFER =&gt; true,         // Returns the result as a string</span>
+</span><span class='line'><span class="x">        CURLOPT_URL =&gt; $url,                    // Sets the url to request</span>
+</span><span class='line'><span class="x">        CURLOPT_FRESH_CONNECT =&gt; true,</span>
+</span><span class='line'><span class="x">        // 以下为自行添加参数</span>
+</span><span class='line'><span class="x">        CURLOPT_PROXY =&gt; &quot;127.0.0.1&quot;,           // 代理服务器地址</span>
+</span><span class='line'><span class="x">        CURLOPT_PROXYPORT =&gt; &quot;10010&quot;,           // 代理接口</span>
+</span><span class='line'><span class="x">        CURLOPT_PROXYTYPE =&gt; CURLPROXY_SOCKS5   // 代理类型，默认为HTTP代理，这里是使用socks5代理</span>
+</span><span class='line'><span class="x">        // 如果还有用户名密码，则添加：CURLOPT_PROXYUSERPWD =&gt; &quot;user:password&quot;</span>
+</span><span class='line'><span class="x">    );</span>
+</span><span class='line'><span class="x">    ...</span>
+</span><span class='line'><span class="x">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4><a href="https://github.com/yang6512/alfredworkflows/raw/master/Baidu%20Suggest.alfredworkflow">Baidu Suggest</a></h4>
+
+<p>这个是照虎画猫自己写的，使用和<code>Google Suggest</code>类似。</p>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_baidu_suggest.png" width="50%" height="50%"></p>
+
+<p><strong>以上两个<code>Workflow</code>是我最频繁使用的功能，相当于直接把Google和Baidu网站上的搜索框放进了<code>Alfred</code>，利用搜索建议大大提升搜索效率，强烈推荐。</strong></p>
+
+<h4><a href="http://dferg.us/ip-address-workflow/">IP Address</a></h4>
+
+<p>获取本地IP和公网IP。</p>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_ip_address.png" width="50%" height="50%"></p>
+
+<h4><a href="http://www.packal.org/workflow/vpn-connections">VPN Connections</a></h4>
+
+<p>快速打开/关闭VPN。</p>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_vpn_connections.png" width="50%" height="50%"></p>
+
+<h4><a href="http://www.packal.org/workflow/colors">Colors</a></h4>
+
+<p>很方便的转换Color值，如从Hex转到UIColor的rgb格式，可以识别NSColor和UIColor的方法，非常方便。</p>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_colors.png" width="50%" height="50%"></p>
+
+<h4><a href="https://github.com/willfarrell/alfred-encode-decode-workflow">Encode / Decode (v1.8)</a></h4>
+
+<p>方便的进行URL、HTML、Base64的encode和decode。</p>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_encode_decode.png" width="50%" height="50%"></p>
+
+<h2>Workflows网站</h2>
+
+<p><a href="http://www.packal.org/">http://www.packal.org/</a></p>
+
+<p><a href="https://github.com/zenorocha/alfred-workflows">https://github.com/zenorocha/alfred-workflows</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[iproxy-通过USB使用SSH连接iOS设备]]></title>
-    <link href="http://yang6512.github.io/blog/2013/09/16/iproxy-tong-guo-usbshi-yong-sshlian-jie-iosshe-bei/"/>
+    <link href="http://okeyang.github.io/blog/2013/09/16/iproxy-tong-guo-usbshi-yong-sshlian-jie-iosshe-bei/"/>
     <updated>2013-09-16T20:56:00+08:00</updated>
-    <id>http://yang6512.github.io/blog/2013/09/16/iproxy-tong-guo-usbshi-yong-sshlian-jie-iosshe-bei</id>
+    <id>http://okeyang.github.io/blog/2013/09/16/iproxy-tong-guo-usbshi-yong-sshlian-jie-iosshe-bei</id>
     <content type="html"><![CDATA[<p>越狱之后用到<code>SSH</code>时需要通过<code>Wi-Fi</code>来连接，输入命令时反应比较慢，还容易掉线，尤其是在越狱开发时，有时会有砸设备、砸Mac的冲动，当然我砸不起，只是想想。</p>
 
 <p>如果能通过USB连接就好了，既不需要依赖<code>Wi-Fi</code>，而且速度非常快，感谢开源社区的大牛们，<a href="http://cgit.sukimashita.com/usbmuxd.git/">usbmuxd</a>开源库就顺带实现了这个功能。</p>
+
+<!-- more -->
+
 
 <p>通过<a href="http://brew.sh/">brew</a>来安装（当然也可以自己去下源码手动安装，由于依赖项比较多，所以很繁琐）</p>
 
@@ -50,9 +633,9 @@
   
   <entry>
     <title type="html"><![CDATA[ARC与非ARC下的Weak-Strong Dance]]></title>
-    <link href="http://yang6512.github.io/blog/2013/07/29/arcyu-fei-arcxia-de-weak-strong-dance/"/>
+    <link href="http://okeyang.github.io/blog/2013/07/29/arcyu-fei-arcxia-de-weak-strong-dance/"/>
     <updated>2013-07-29T17:16:00+08:00</updated>
-    <id>http://yang6512.github.io/blog/2013/07/29/arcyu-fei-arcxia-de-weak-strong-dance</id>
+    <id>http://okeyang.github.io/blog/2013/07/29/arcyu-fei-arcxia-de-weak-strong-dance</id>
     <content type="html"><![CDATA[<h2>ARC</h2>
 
 <p>在使用block过程中，经常会遇到<code>retain cycle</code>的问题，例如：</p>
@@ -93,6 +676,9 @@
 
 
 <p>在block中用到了self，self会被block retain，而_observer会copy一份该block，就是说_observer间接持有self，同时当前的self也会retain _observer，最终导致self持有_observer，_observer持有self，形成<code>retain cycle</code>。</p>
+
+<!-- more -->
+
 
 <p>对于在block中的<code>retain cycle</code>，在2011 WWDC Session #322 (Objective-C Advancements in Depth)有一个解决方案<code>weak-strong dance</code>，很漂亮的名字。其实现如下：</p>
 
@@ -206,11 +792,14 @@
   
   <entry>
     <title type="html"><![CDATA[企业开发者证书(In-House Distribution)相关问题解答]]></title>
-    <link href="http://yang6512.github.io/blog/2013/07/24/qi-ye-kai-fa-zhe-zheng-shu-xiang-guan-wen-ti-jie-da/"/>
+    <link href="http://okeyang.github.io/blog/2013/07/24/qi-ye-kai-fa-zhe-zheng-shu-xiang-guan-wen-ti-jie-da/"/>
     <updated>2013-07-24T16:00:00+08:00</updated>
-    <id>http://yang6512.github.io/blog/2013/07/24/qi-ye-kai-fa-zhe-zheng-shu-xiang-guan-wen-ti-jie-da</id>
-    <content type="html"><![CDATA[<p><img src="http://yang6512.github.io/images/2013/ios_developer_enterprise_program.png">
+    <id>http://okeyang.github.io/blog/2013/07/24/qi-ye-kai-fa-zhe-zheng-shu-xiang-guan-wen-ti-jie-da</id>
+    <content type="html"><![CDATA[<p><img src="http://okeyang.github.io/images/2013/ios_developer_enterprise_program.png">
 最近对企业开发者证书（299刀的）产生了兴趣，查找发现相关资料很少，因此整理了一下相关资料，希望对有同样问题的朋友有所帮助。</p>
+
+<!-- more -->
+
 
 <h2>1、是否有分发设备数目限制？</h2>
 
@@ -254,10 +843,13 @@
   
   <entry>
     <title type="html"><![CDATA[xCode下自动打包为ipa文件]]></title>
-    <link href="http://yang6512.github.io/blog/2013/07/05/xcodexia-zi-dong-da-bao-wei-ipawen-jian/"/>
+    <link href="http://okeyang.github.io/blog/2013/07/05/xcodexia-zi-dong-da-bao-wei-ipawen-jian/"/>
     <updated>2013-07-05T12:58:00+08:00</updated>
-    <id>http://yang6512.github.io/blog/2013/07/05/xcodexia-zi-dong-da-bao-wei-ipawen-jian</id>
+    <id>http://okeyang.github.io/blog/2013/07/05/xcodexia-zi-dong-da-bao-wei-ipawen-jian</id>
     <content type="html"><![CDATA[<p>最近经常给测试发包，用老办法的话总是先生成app文件，然后拖到iTunes下生成ipa文件，虽然说过程简单，但重复做这么件事总会觉得麻烦。因此用xCode命令行工具提供的<code>xcrun</code>工具写成shell，然后再添加到xCode的工程下，这样就很方便的在每次build之后就能生成相应的ipa文件。shell如下：</p>
+
+<!-- more -->
+
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -278,20 +870,23 @@
 
 <p>会在工程根目录下生成一个build文件夹，然后会把生成的日志和ipa文件放到文件夹下。
 然后在project下的<code>Build Phase</code>下<code>Add Run Script</code>将shell路径添加进去。
-<img src="http://yang6512.github.io/images/2013/add_script_in_xcode.png"></p>
+<img src="http://okeyang.github.io/images/2013/add_script_in_xcode.png"></p>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[如何在打包时将文件放入Documents目录]]></title>
-    <link href="http://yang6512.github.io/blog/2013/05/24/ru-he-zai-da-bao-shi-jiang-wen-jian-fang-ru-documentsmu-lu/"/>
+    <link href="http://okeyang.github.io/blog/2013/05/24/ru-he-zai-da-bao-shi-jiang-wen-jian-fang-ru-documentsmu-lu/"/>
     <updated>2013-05-24T14:31:00+08:00</updated>
-    <id>http://yang6512.github.io/blog/2013/05/24/ru-he-zai-da-bao-shi-jiang-wen-jian-fang-ru-documentsmu-lu</id>
+    <id>http://okeyang.github.io/blog/2013/05/24/ru-he-zai-da-bao-shi-jiang-wen-jian-fang-ru-documentsmu-lu</id>
     <content type="html"><![CDATA[<p>今天遇到一个这样的问题，想在打包时将一些文件放进<code>Documents</code>目录下，这样用户能在一开始就能有一些文件可用。像类似于一些阅读类app就经常将几本默认书籍放入<code>Documents</code>目录下。</p>
+
+<!-- more -->
+
 
 <p>首先我们来看一下一个应用程序的文件结构：</p>
 
-<p><img src="http://yang6512.github.io/images/2013/ios_app_layout.jpg"></p>
+<p><img src="http://okeyang.github.io/images/2013/ios_app_layout.jpg"></p>
 
 <p>如图，可以看出<code>.app</code>文件和<code>Documents</code>文件夹处于同一级，而<code>.app</code>文件正是我们build时打包生成的应用程序文件，我们向project中添加的resource文件也当然只处于<code>.app</code>中。这样，就想到在<code>Info.plist</code>中会不会有这样的设置，可以在应用程序安装时将指定文件添加到<code>Documents</code>目录，很可惜，没有这样的设置。</p>
 

@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>如何在打包时将文件放入Documents目录 - okeyang's blog</title>
+  <title>文章类别：OSX - okeyang's blog</title>
   <meta name="author" content="okeyang">
 
   
-  <meta name="description" content="今天遇到一个这样的问题，想在打包时将一些文件放进Documents目录下，这样用户能在一开始就能有一些文件可用。像类似于一些阅读类app就经常将几本默认书籍放入Documents目录下。 首先我们来看一下一个应用程序的文件结构： 如图，可以看出.app文件和Documents文件夹处于同一级，而. &hellip;">
+  <meta name="description" content="Category: OSX">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://okeyang.github.io/blog/2013/05/24/ru-he-zai-da-bao-shi-jiang-wen-jian-fang-ru-documentsmu-lu">
+  <link rel="canonical" href="http://okeyang.github.ioblog/categories/osx">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="okeyang's blog" type="application/atom+xml">
@@ -64,105 +64,36 @@
   <div id="main">
     <div id="content">
       <div>
-<article class="hentry" role="article">
+<article role="article">
   
   <header>
-    
-      <h1 class="entry-title">如何在打包时将文件放入Documents目录</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-24T14:31:00+08:00" pubdate data-updated="true">2013年05月24日</time>
-        
-         | <a href="#disqus_thread">Comments</a>
-        
-      </p>
+    <h1 class="entry-title">文章类别：OSX</h1>
     
   </header>
-
-
-<div class="entry-content"><p>今天遇到一个这样的问题，想在打包时将一些文件放进<code>Documents</code>目录下，这样用户能在一开始就能有一些文件可用。像类似于一些阅读类app就经常将几本默认书籍放入<code>Documents</code>目录下。</p>
-
-<!-- more -->
-
-
-<p>首先我们来看一下一个应用程序的文件结构：</p>
-
-<p><img src="/images/2013/ios_app_layout.jpg"></p>
-
-<p>如图，可以看出<code>.app</code>文件和<code>Documents</code>文件夹处于同一级，而<code>.app</code>文件正是我们build时打包生成的应用程序文件，我们向project中添加的resource文件也当然只处于<code>.app</code>中。这样，就想到在<code>Info.plist</code>中会不会有这样的设置，可以在应用程序安装时将指定文件添加到<code>Documents</code>目录，很可惜，没有这样的设置。</p>
-
-<p>那么，现在看来，要实现这样的功能就只能曲线救国了，思路如下：</p>
-
-<p>将文件随app一起打包，然后在程序第一次运行时将这些文件通过代码copy到<code>Documents</code>目录下，当然要记录一个状态位，每次去读取这个状态位来进行判断。</p>
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
   
-
-<span class="byline author vcard">Posted by <span class="fn">okeyang</span></span>
-
-      
-
-
-
-
-
+  <div id="blog-archives" class="category">
 
 
 
   
+  <h2>2015年</h2>
+
+<article>
+  
+<h1><a href="/blog/2015/07/24/shen-ru-jie-xi-mac-os-x-and-ioscao-zuo-xi-tong--du-shu-bi-ji/">《深入解析Mac OS X &amp; iOS操作系统》读书笔记</a></h1>
+<time datetime="2015-07-24T16:44:00+08:00" pubdate><span class='month'>07月</span> <span class='day'>24日</span> <span class='year'>2015</span></time>
+
+<footer>
+  <span class="categories">posted in <a class='category' href='/blog/categories/osx/'>OSX</a>, <a class='category' href='/blog/categories/ios/'>iOS</a></span>
+</footer>
 
 
-<time datetime="2013-05-24T14:31:00+08:00" pubdate data-updated="true">2013年05月24日</time>
-      
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/ios/'>iOS</a>
-  
-</span>
-
-
-    </p>
-    
-      <div class="sharing">
-  
-  
-  
-  
-</div>
-
-    
-    <p class="meta">
-      
-      
-        <a class="basic-alignment right" href="/blog/2013/07/05/xcodexia-zi-dong-da-bao-wei-ipawen-jian/" title="Next Post: xCode下自动打包为ipa文件">xCode下自动打包为ipa文件 &raquo;</a>
-      
-    </p>
-  </footer>
 </article>
 
-  <section>
-    <h1>Comments</h1>
-    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
-  </section>
+
+  
+</article>
 
 
 </div>
@@ -218,10 +149,7 @@
       var disqus_shortname = 'okeyang';
       
         
-        // var disqus_developer = 1;
-        var disqus_identifier = 'http://okeyang.github.io/blog/2013/05/24/ru-he-zai-da-bao-shi-jiang-wen-jian-fang-ru-documentsmu-lu/';
-        var disqus_url = 'http://okeyang.github.io/blog/2013/05/24/ru-he-zai-da-bao-shi-jiang-wen-jian-fang-ru-documentsmu-lu/';
-        var disqus_script = 'embed.js';
+        var disqus_script = 'count.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[文章类别：越狱 | Edward Yang的博客]]></title>
-  <link href="http://yang6512.github.io/blog/categories/yue-yu/atom.xml" rel="self"/>
-  <link href="http://yang6512.github.io/"/>
-  <updated>2015-02-12T11:49:34+08:00</updated>
-  <id>http://yang6512.github.io/</id>
+  <title><![CDATA[文章类别：越狱 | okeyang's blog]]></title>
+  <link href="http://okeyang.github.io/blog/categories/yue-yu/atom.xml" rel="self"/>
+  <link href="http://okeyang.github.io/"/>
+  <updated>2016-10-10T00:36:18+08:00</updated>
+  <id>http://okeyang.github.io/</id>
   <author>
-    <name><![CDATA[Edward Yang]]></name>
+    <name><![CDATA[okeyang]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
@@ -15,12 +15,15 @@
   
   <entry>
     <title type="html"><![CDATA[iproxy-通过USB使用SSH连接iOS设备]]></title>
-    <link href="http://yang6512.github.io/blog/2013/09/16/iproxy-tong-guo-usbshi-yong-sshlian-jie-iosshe-bei/"/>
+    <link href="http://okeyang.github.io/blog/2013/09/16/iproxy-tong-guo-usbshi-yong-sshlian-jie-iosshe-bei/"/>
     <updated>2013-09-16T20:56:00+08:00</updated>
-    <id>http://yang6512.github.io/blog/2013/09/16/iproxy-tong-guo-usbshi-yong-sshlian-jie-iosshe-bei</id>
+    <id>http://okeyang.github.io/blog/2013/09/16/iproxy-tong-guo-usbshi-yong-sshlian-jie-iosshe-bei</id>
     <content type="html"><![CDATA[<p>越狱之后用到<code>SSH</code>时需要通过<code>Wi-Fi</code>来连接，输入命令时反应比较慢，还容易掉线，尤其是在越狱开发时，有时会有砸设备、砸Mac的冲动，当然我砸不起，只是想想。</p>
 
 <p>如果能通过USB连接就好了，既不需要依赖<code>Wi-Fi</code>，而且速度非常快，感谢开源社区的大牛们，<a href="http://cgit.sukimashita.com/usbmuxd.git/">usbmuxd</a>开源库就顺带实现了这个功能。</p>
+
+<!-- more -->
+
 
 <p>通过<a href="http://brew.sh/">brew</a>来安装（当然也可以自己去下源码手动安装，由于依赖项比较多，所以很繁琐）
 <code>sh

@@ -1,0 +1,365 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Alfred配置 - okeyang's blog</title>
+  <meta name="author" content="okeyang">
+
+  
+  <meta name="description" content="一直使用Alfred这款神器，为了将效率更提升一步，最近一狠心，买了的Powerpack，对于每项配置的具体介绍推荐读一下这篇文章：丢掉鼠标－Mac神软Alfred使用手册1。下面重点说一下我的Web Search和Workflows配置。 Web Search 尽可能把会使用到的搜索地址添加进来 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://okeyang.github.io/blog/2015/07/15/alfredpei-zhi">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="okeyang's blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">okeyang's blog</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:okeyang.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">主页</a></li>
+  <li><a href="/blog/archives">所有文章</a></li>
+  <li><a href="/blog/categories/ios">iOS开发</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Alfred配置</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-07-15T22:45:00+08:00" pubdate data-updated="true">2015年07月15日</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>一直使用<a href="http://www.alfredapp.com">Alfred</a>这款神器，为了将效率更提升一步，最近一狠心，买了的<a href="http://www.alfredapp.com/powerpack/">Powerpack</a>，对于每项配置的具体介绍推荐读一下这篇文章：<a href="http://wellsnake.com/jekyll/update/2014/06/15/001/">丢掉鼠标－Mac神软Alfred使用手册1</a>。下面重点说一下我的<code>Web Search</code>和<code>Workflows</code>配置。</p>
+
+<h2>Web Search</h2>
+
+<p><img src="/images/2015/alfred_web_search.png" width="75%" height="75%"></p>
+
+<p>尽可能把会使用到的搜索地址添加进来，这样就可以尽可能使用<code>Alfred</code>作为入口，提升效率，以下是我自行添加的搜索地址URL</p>
+
+<!-- more -->
+
+
+<h5>Github</h5>
+
+<p><code>https://github.com/search?utf8=%E2%9C%93&amp;q={query}</code> <br/>
+需勾选<code>Encode spaces as +</code></p>
+
+<h5>Stackoverflow</h5>
+
+<p><code>http://stackoverflow.com/search?q={query}</code><br/>
+需勾选<code>Encode spaces as +</code></p>
+
+<h5>百度</h5>
+
+<p><code>https://www.baidu.com/s?wd={query}</code></p>
+
+<h5>百度百科</h5>
+
+<p><code>http://baike.baidu.com/search/word?word={query}</code></p>
+
+<h5>百度图片</h5>
+
+<p><code>http://image.baidu.com/i?z=&amp;s=1&amp;ct=201326592&amp;cl=2&amp;lm=-1&amp;tn=baiduimage&amp;ie=utf-8&amp;word={query}</code></p>
+
+<h5>知乎</h5>
+
+<p><code>http://www.zhihu.com/search?q={query}&amp;type1=all</code></p>
+
+<h5>天猫</h5>
+
+<p><code>http://list.tmall.com/search_product.htm?q={query}</code></p>
+
+<h5>淘宝</h5>
+
+<p><code>http://s.taobao.com/search?q={query}</code></p>
+
+<h5>京东</h5>
+
+<p><code>http://search.jd.com/Search?keyword={query}&amp;enc=utf-8</code></p>
+
+<h2>Workflows</h2>
+
+<h4><a href="https://github.com/yang6512/alfredworkflows/raw/master/Google%20Suggest.alfredworkflow">Google Suggest</a></h4>
+
+<p>直接使用的Examples里面的，在此基础上稍微做了下改进，修复了一些bug，还支持<code>tab</code>自动补全，可以在搜索建议结果未返回时直接搜索内容。</p>
+
+<p><img src="/images/2015/alfred_google_suggest.png" width="50%" height="50%"></p>
+
+<p>如果使用代理服务器，可以通过修改源码实现，点击如下所示<code>Open workflow folder</code></p>
+
+<p><img src="/images/2015/alfred_open_workflow_folder.png" width="50%" height="50%"></p>
+
+<p>然后编辑workflows.php，找到</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">public function request( $url=null, $options=null )</span>
+</span><span class='line'><span class="x">{</span>
+</span><span class='line'><span class="x">    ...</span>
+</span><span class='line'><span class="x">    $defaults = array(                          // Create a list of default curl options</span>
+</span><span class='line'><span class="x">        CURLOPT_RETURNTRANSFER =&gt; true,         // Returns the result as a string</span>
+</span><span class='line'><span class="x">        CURLOPT_URL =&gt; $url,                    // Sets the url to request</span>
+</span><span class='line'><span class="x">        CURLOPT_FRESH_CONNECT =&gt; true,</span>
+</span><span class='line'><span class="x">        // 以下为自行添加参数</span>
+</span><span class='line'><span class="x">        CURLOPT_PROXY =&gt; &quot;127.0.0.1&quot;,           // 代理服务器地址</span>
+</span><span class='line'><span class="x">        CURLOPT_PROXYPORT =&gt; &quot;10010&quot;,           // 代理接口</span>
+</span><span class='line'><span class="x">        CURLOPT_PROXYTYPE =&gt; CURLPROXY_SOCKS5   // 代理类型，默认为HTTP代理，这里是使用socks5代理</span>
+</span><span class='line'><span class="x">        // 如果还有用户名密码，则添加：CURLOPT_PROXYUSERPWD =&gt; &quot;user:password&quot;</span>
+</span><span class='line'><span class="x">    );</span>
+</span><span class='line'><span class="x">    ...</span>
+</span><span class='line'><span class="x">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4><a href="https://github.com/yang6512/alfredworkflows/raw/master/Baidu%20Suggest.alfredworkflow">Baidu Suggest</a></h4>
+
+<p>这个是照虎画猫自己写的，使用和<code>Google Suggest</code>类似。</p>
+
+<p><img src="/images/2015/alfred_baidu_suggest.png" width="50%" height="50%"></p>
+
+<p><strong>以上两个<code>Workflow</code>是我最频繁使用的功能，相当于直接把Google和Baidu网站上的搜索框放进了<code>Alfred</code>，利用搜索建议大大提升搜索效率，强烈推荐。</strong></p>
+
+<h4><a href="http://dferg.us/ip-address-workflow/">IP Address</a></h4>
+
+<p>获取本地IP和公网IP。</p>
+
+<p><img src="/images/2015/alfred_ip_address.png" width="50%" height="50%"></p>
+
+<h4><a href="http://www.packal.org/workflow/vpn-connections">VPN Connections</a></h4>
+
+<p>快速打开/关闭VPN。</p>
+
+<p><img src="/images/2015/alfred_vpn_connections.png" width="50%" height="50%"></p>
+
+<h4><a href="http://www.packal.org/workflow/colors">Colors</a></h4>
+
+<p>很方便的转换Color值，如从Hex转到UIColor的rgb格式，可以识别NSColor和UIColor的方法，非常方便。</p>
+
+<p><img src="/images/2015/alfred_colors.png" width="50%" height="50%"></p>
+
+<h4><a href="https://github.com/willfarrell/alfred-encode-decode-workflow">Encode / Decode (v1.8)</a></h4>
+
+<p>方便的进行URL、HTML、Base64的encode和decode。</p>
+
+<p><img src="/images/2015/alfred_encode_decode.png" width="50%" height="50%"></p>
+
+<h2>Workflows网站</h2>
+
+<p><a href="http://www.packal.org/">http://www.packal.org/</a></p>
+
+<p><a href="https://github.com/zenorocha/alfred-workflows">https://github.com/zenorocha/alfred-workflows</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">okeyang</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-07-15T22:45:00+08:00" pubdate data-updated="true">2015年07月15日</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/tools/'>Tools</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/09/16/iproxy-tong-guo-usbshi-yong-sshlian-jie-iosshe-bei/" title="Previous Post: iproxy-通过USB使用SSH连接iOS设备">&laquo; iproxy-通过USB使用SSH连接iOS设备</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/07/24/shen-ru-jie-xi-mac-os-x-and-ioscao-zuo-xi-tong--du-shu-bi-ji/" title="Next Post: 《深入解析Mac OS X &amp; iOS操作系统》读书笔记">《深入解析Mac OS X &amp; iOS操作系统》读书笔记 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/10/07/xcode8xin-zeng-debugfang-fa/">Xcode8新增Debug方法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/24/shen-ru-jie-xi-mac-os-x-and-ioscao-zuo-xi-tong--du-shu-bi-ji/">《深入解析Mac OS X &amp; iOS操作系统》读书笔记</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/15/alfredpei-zhi/">Alfred配置</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/16/iproxy-tong-guo-usbshi-yong-sshlian-jie-iosshe-bei/">iproxy-通过USB使用SSH连接iOS设备</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/29/arcyu-fei-arcxia-de-weak-strong-dance/">ARC与非ARC下的Weak-Strong Dance</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - okeyang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'okeyang';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://okeyang.github.io/blog/2015/07/15/alfredpei-zhi/';
+        var disqus_url = 'http://okeyang.github.io/blog/2015/07/15/alfredpei-zhi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

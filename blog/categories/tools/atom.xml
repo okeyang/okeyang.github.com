@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[文章类别：Tools | okeyang's blog]]></title>
+  <link href="http://okeyang.github.io/blog/categories/tools/atom.xml" rel="self"/>
+  <link href="http://okeyang.github.io/"/>
+  <updated>2016-10-10T00:36:18+08:00</updated>
+  <id>http://okeyang.github.io/</id>
+  <author>
+    <name><![CDATA[okeyang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Alfred配置]]></title>
+    <link href="http://okeyang.github.io/blog/2015/07/15/alfredpei-zhi/"/>
+    <updated>2015-07-15T22:45:00+08:00</updated>
+    <id>http://okeyang.github.io/blog/2015/07/15/alfredpei-zhi</id>
+    <content type="html"><![CDATA[<p>一直使用<a href="http://www.alfredapp.com">Alfred</a>这款神器，为了将效率更提升一步，最近一狠心，买了的<a href="http://www.alfredapp.com/powerpack/">Powerpack</a>，对于每项配置的具体介绍推荐读一下这篇文章：<a href="http://wellsnake.com/jekyll/update/2014/06/15/001/">丢掉鼠标－Mac神软Alfred使用手册1</a>。下面重点说一下我的<code>Web Search</code>和<code>Workflows</code>配置。</p>
+
+<h2>Web Search</h2>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_web_search.png" width="75%" height="75%"></p>
+
+<p>尽可能把会使用到的搜索地址添加进来，这样就可以尽可能使用<code>Alfred</code>作为入口，提升效率，以下是我自行添加的搜索地址URL</p>
+
+<!-- more -->
+
+
+<h5>Github</h5>
+
+<p><code>https://github.com/search?utf8=%E2%9C%93&amp;q={query}</code> <br/>
+需勾选<code>Encode spaces as +</code></p>
+
+<h5>Stackoverflow</h5>
+
+<p><code>http://stackoverflow.com/search?q={query}</code><br/>
+需勾选<code>Encode spaces as +</code></p>
+
+<h5>百度</h5>
+
+<p><code>https://www.baidu.com/s?wd={query}</code></p>
+
+<h5>百度百科</h5>
+
+<p><code>http://baike.baidu.com/search/word?word={query}</code></p>
+
+<h5>百度图片</h5>
+
+<p><code>http://image.baidu.com/i?z=&amp;s=1&amp;ct=201326592&amp;cl=2&amp;lm=-1&amp;tn=baiduimage&amp;ie=utf-8&amp;word={query}</code></p>
+
+<h5>知乎</h5>
+
+<p><code>http://www.zhihu.com/search?q={query}&amp;type1=all</code></p>
+
+<h5>天猫</h5>
+
+<p><code>http://list.tmall.com/search_product.htm?q={query}</code></p>
+
+<h5>淘宝</h5>
+
+<p><code>http://s.taobao.com/search?q={query}</code></p>
+
+<h5>京东</h5>
+
+<p><code>http://search.jd.com/Search?keyword={query}&amp;enc=utf-8</code></p>
+
+<h2>Workflows</h2>
+
+<h4><a href="https://github.com/yang6512/alfredworkflows/raw/master/Google%20Suggest.alfredworkflow">Google Suggest</a></h4>
+
+<p>直接使用的Examples里面的，在此基础上稍微做了下改进，修复了一些bug，还支持<code>tab</code>自动补全，可以在搜索建议结果未返回时直接搜索内容。</p>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_google_suggest.png" width="50%" height="50%"></p>
+
+<p>如果使用代理服务器，可以通过修改源码实现，点击如下所示<code>Open workflow folder</code></p>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_open_workflow_folder.png" width="50%" height="50%"></p>
+
+<p>然后编辑workflows.php，找到
+``` php
+public function request( $url=null, $options=null )
+{</p>
+
+<pre><code>...
+$defaults = array(                          // Create a list of default curl options
+    CURLOPT_RETURNTRANSFER =&gt; true,         // Returns the result as a string
+    CURLOPT_URL =&gt; $url,                    // Sets the url to request
+    CURLOPT_FRESH_CONNECT =&gt; true,
+    // 以下为自行添加参数
+    CURLOPT_PROXY =&gt; "127.0.0.1",           // 代理服务器地址
+    CURLOPT_PROXYPORT =&gt; "10010",           // 代理接口
+    CURLOPT_PROXYTYPE =&gt; CURLPROXY_SOCKS5   // 代理类型，默认为HTTP代理，这里是使用socks5代理
+    // 如果还有用户名密码，则添加：CURLOPT_PROXYUSERPWD =&gt; "user:password"
+);
+...
+</code></pre>
+
+<p>}
+```</p>
+
+<h4><a href="https://github.com/yang6512/alfredworkflows/raw/master/Baidu%20Suggest.alfredworkflow">Baidu Suggest</a></h4>
+
+<p>这个是照虎画猫自己写的，使用和<code>Google Suggest</code>类似。</p>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_baidu_suggest.png" width="50%" height="50%"></p>
+
+<p><strong>以上两个<code>Workflow</code>是我最频繁使用的功能，相当于直接把Google和Baidu网站上的搜索框放进了<code>Alfred</code>，利用搜索建议大大提升搜索效率，强烈推荐。</strong></p>
+
+<h4><a href="http://dferg.us/ip-address-workflow/">IP Address</a></h4>
+
+<p>获取本地IP和公网IP。</p>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_ip_address.png" width="50%" height="50%"></p>
+
+<h4><a href="http://www.packal.org/workflow/vpn-connections">VPN Connections</a></h4>
+
+<p>快速打开/关闭VPN。</p>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_vpn_connections.png" width="50%" height="50%"></p>
+
+<h4><a href="http://www.packal.org/workflow/colors">Colors</a></h4>
+
+<p>很方便的转换Color值，如从Hex转到UIColor的rgb格式，可以识别NSColor和UIColor的方法，非常方便。</p>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_colors.png" width="50%" height="50%"></p>
+
+<h4><a href="https://github.com/willfarrell/alfred-encode-decode-workflow">Encode / Decode (v1.8)</a></h4>
+
+<p>方便的进行URL、HTML、Base64的encode和decode。</p>
+
+<p><img src="http://okeyang.github.io/images/2015/alfred_encode_decode.png" width="50%" height="50%"></p>
+
+<h2>Workflows网站</h2>
+
+<p><a href="http://www.packal.org/">http://www.packal.org/</a></p>
+
+<p><a href="https://github.com/zenorocha/alfred-workflows">https://github.com/zenorocha/alfred-workflows</a></p>
+]]></content>
+  </entry>
+  
+</feed>

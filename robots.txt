@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://yang6512.github.io/sitemap.xml 
+Sitemap: http://okeyang.github.io/sitemap.xml 

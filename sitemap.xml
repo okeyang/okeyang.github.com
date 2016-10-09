@@ -2,48 +2,60 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>
-            http://yang6512.github.io/blog/2013/05/24/ru-he-zai-da-bao-shi-jiang-wen-jian-fang-ru-documentsmu-lu/
+            http://okeyang.github.io/blog/2013/05/24/ru-he-zai-da-bao-shi-jiang-wen-jian-fang-ru-documentsmu-lu/
         </loc>
-        <lastmod>2015-02-12T10:33:35+08:00</lastmod>
+        <lastmod>2016-10-09T23:20:24+08:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yang6512.github.io/blog/2013/07/05/xcodexia-zi-dong-da-bao-wei-ipawen-jian/
+            http://okeyang.github.io/blog/2013/07/05/xcodexia-zi-dong-da-bao-wei-ipawen-jian/
         </loc>
-        <lastmod>2015-02-12T10:33:35+08:00</lastmod>
+        <lastmod>2016-10-09T23:20:24+08:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yang6512.github.io/blog/2013/07/24/qi-ye-kai-fa-zhe-zheng-shu-xiang-guan-wen-ti-jie-da/
+            http://okeyang.github.io/blog/2013/07/24/qi-ye-kai-fa-zhe-zheng-shu-xiang-guan-wen-ti-jie-da/
         </loc>
-        <lastmod>2015-02-12T10:33:35+08:00</lastmod>
+        <lastmod>2016-10-09T23:20:24+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://okeyang.github.io/blog/2013/07/29/arcyu-fei-arcxia-de-weak-strong-dance/</loc>
+        <lastmod>2016-10-09T23:20:24+08:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yang6512.github.io/blog/2013/07/29/arcyu-fei-arcxia-de-weak-strong-dance/
+            http://okeyang.github.io/blog/2013/09/16/iproxy-tong-guo-usbshi-yong-sshlian-jie-iosshe-bei/
         </loc>
-        <lastmod>2015-02-12T10:33:35+08:00</lastmod>
+        <lastmod>2016-10-09T23:20:24+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://okeyang.github.io/blog/2015/07/15/alfredpei-zhi/</loc>
+        <lastmod>2016-10-09T23:20:24+08:00</lastmod>
     </url>
     <url>
         <loc>
-            http://yang6512.github.io/blog/2013/09/16/iproxy-tong-guo-usbshi-yong-sshlian-jie-iosshe-bei/
+            http://okeyang.github.io/blog/2015/07/24/shen-ru-jie-xi-mac-os-x-and-ioscao-zuo-xi-tong--du-shu-bi-ji/
         </loc>
+        <lastmod>2016-10-09T23:20:24+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://okeyang.github.io/blog/2016/10/07/xcode8xin-zeng-debugfang-fa/</loc>
+        <lastmod>2016-10-10T00:17:16+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://okeyang.github.io/404.html</loc>
         <lastmod>2015-02-12T10:33:35+08:00</lastmod>
     </url>
     <url>
-        <loc>http://yang6512.github.io/404.html</loc>
-        <lastmod>2015-02-12T10:33:35+08:00</lastmod>
+        <loc>http://okeyang.github.io/blog/archives/</loc>
+        <lastmod>2016-10-10T00:17:16+08:00</lastmod>
     </url>
     <url>
-        <loc>http://yang6512.github.io/blog/archives/</loc>
-        <lastmod>2015-02-12T10:33:35+08:00</lastmod>
+        <loc>http://okeyang.github.io/</loc>
+        <lastmod>2016-10-10T00:17:16+08:00</lastmod>
     </url>
     <url>
-        <loc>http://yang6512.github.io/</loc>
-        <lastmod>2015-02-12T10:33:35+08:00</lastmod>
-    </url>
-    <url>
-        <loc>http://yang6512.github.io/robots.txt</loc>
+        <loc>http://okeyang.github.io/robots.txt</loc>
         <lastmod>2015-02-12T10:33:35+08:00</lastmod>
     </url>
 </urlset>

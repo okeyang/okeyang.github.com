@@ -1,0 +1,375 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Xcode8新增Debug方法 - okeyang's blog</title>
+  <meta name="author" content="okeyang">
+
+  
+  <meta name="description" content="今年的WWDC介绍了不少新的调试方法，可以更加快捷便利的定位问题、分析问题、解决问题，下面就简单介绍一下。 循环布局检测 当你进入某个界面或点击某个按钮后，发现屏幕不再响应事件，然后进入无限等待，debug下可以看到CPU满负荷，RAM也不断增加，那么有可能就进入了循环布局状态。 举个栗子 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://okeyang.github.io/blog/2016/10/07/xcode8xin-zeng-debugfang-fa">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="okeyang's blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">okeyang's blog</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:okeyang.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">主页</a></li>
+  <li><a href="/blog/archives">所有文章</a></li>
+  <li><a href="/blog/categories/ios">iOS开发</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Xcode8新增Debug方法</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-10-07T23:25:00+08:00" pubdate data-updated="true">2016年10月07日</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>今年的WWDC介绍了不少新的调试方法，可以更加快捷便利的定位问题、分析问题、解决问题，下面就简单介绍一下。</p>
+
+<h2>循环布局检测</h2>
+
+<p>当你进入某个界面或点击某个按钮后，发现屏幕不再响应事件，然后进入无限等待，debug下可以看到CPU满负荷，RAM也不断增加，那么有可能就进入了循环布局状态。</p>
+
+<h4>举个栗子</h4>
+
+<p>先说一个简单的循环布局的case，如下图所示。</p>
+
+<p><img src="/images/2016/auto_layout_loop.png"></p>
+
+<p>最底下的subview A在layout时更新superview B的<code>bounds</code>，B因为不在layout状态，所以会使superview B调用其superview C的<code>setNeedsLayout()</code>方法，然后进入layout状态，此时C重置B的<code>bounds</code>，B又使A再次layout。因为对B的<code>bounds</code>设置不一致，导致循环下去。</p>
+
+<!-- more -->
+
+
+<h4>检测方法</h4>
+
+<p>可在<code>Launch Arguments</code>中添加<code>UIViewLayoutFeedbackLoopDebuggingThreshold</code>，设置循环布局阀值，如100，然后当循环布局次数超过阀值时会抛出异常，此时通过<code>po [_UIViewLayoutFeedbackLoopDebugger layoutFeedbackLoopDebugger]</code>可输出详细信息。</p>
+
+<p><img src="/images/2016/auto_layout_loop_threshold.png"></p>
+
+<h2>parray poarray</h2>
+
+<p>看名字就能猜到，这是针对数组的打印信息命令。在传统的C数组中，是无法通过数组本身知道其长度的，所以一直以来<code>lldb</code>都不能很好的打印C数组，<code>parray</code>和<code>poarray</code>解决了这个痛点，可以通过指定打印个数来打印数组的多个内容。</p>
+
+<blockquote><p>需要注意的是这两个命令都是针对C数组的，区别是以<code>p</code>还是<code>po</code>的方式打印数组内容。另外只能打印堆空间存储的数组。</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="c1">// 以&quot;p&quot;方式打印内容</span>
+</span><span class='line'><span class="n">parray</span> <span class="mi">3</span> <span class="n">intArray</span>
+</span><span class='line'><span class="n">parray</span> <span class="err">`</span><span class="n">count</span><span class="err">`</span> <span class="n">intArray</span>    <span class="c1">// &quot;count&quot;为代码中变量</span>
+</span><span class='line'><span class="c1">// 以&quot;po&quot;方式打印内容</span>
+</span><span class='line'><span class="n">poarray</span> <span class="mi">3</span> <span class="n">objectArray</span>
+</span><span class='line'><span class="n">poarray</span> <span class="err">`</span><span class="n">count</span><span class="err">`</span> <span class="n">objectArray</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>register read</h2>
+
+<p><code>register</code>命令并不是新增的，一直以来都有，但在WWDC2016<code>Session 417 Debugging Tips and Tricks</code>中重点说了一下，实为解决一类疑难bug的利器，在这里也简单介绍下。</p>
+
+<p>平时是否有过crash在没有源码的第三方库或系统库中，而检查自己代码又没有发现任何问题？那么试试<code>register</code>命令吧，可能会有意向不到的效果。</p>
+
+<p>通过<code>register read</code>可以读取当前状态下寄存器存储的变量，在没有源码的情况下运气好就可以获取到一些非常有用的信息，毕竟很有可能是你传入的某个错误值导致的最终crash，而这个值就可能从寄存器中取到，从而快速定位原因。</p>
+
+<p><code>register</code>还有一个非常有用的特性，当刚进入某一函数时，可通过<code>register read $arg1 $arg2 ...</code>读取函数的各个参数值，如下：</p>
+
+<p><img src="/images/2016/register_read.png"></p>
+
+<h2>启动各过程耗时检测</h2>
+
+<p>在WWDC2016<code>Session 406 Optimizing App Startup Time</code>中，详细介绍了App启动，即进入<code>main()</code>函数前做了什么事儿，以及如何优化各个过程，另外提供了<code>DYLD_PRINT_STATISTICS</code>环境变量方便测试各个过程耗时。</p>
+
+<p><img src="/images/2016/startup_time1.png"></p>
+
+<p>然后在启动时会打印如下所示信息：</p>
+
+<p><img src="/images/2016/startup_time2.png"></p>
+
+<p>Apple工程师给出的建议是：</p>
+
+<blockquote><p>在最新的设备下，启动时间控制在<code>400ms</code>以内</p></blockquote>
+
+<p>如果你的App不达标，那么就开始着手优化吧！具体各个过程的优化原理及方法，限于篇幅就不再介绍了，感兴趣可以看看<a href="https://developer.apple.com/videos/wwdc/2016/?id=406">Session 406 Optimizing App Startup Time</a>。</p>
+
+<h2>runtime issue</h2>
+
+<p>Xcode8新增了运行时问题的检查，如下：</p>
+
+<p><img src="/images/2016/runtime_issue.png"></p>
+
+<p><code>runtime issue</code>主要分为3类：</p>
+
+<ul>
+<li>线程问题，加入了<code>Thread Sanitizer</code>检测线程问题</li>
+<li>UI布局问题，主要是约束冲突</li>
+<li>内存问题，检测内存泄露</li>
+</ul>
+
+
+<h2>Thread Sanitizer</h2>
+
+<p>继<code>Address Sanitizer</code>之后，Xcode8中加入<code>Thread Sanitizer</code>用于检查一些线程问题，并会显示在<code>runtime issue</code>列表中，使用<code>Thread Sanitizer</code>需如下图所示开启，重新编译运行后即可。</p>
+
+<p><img src="/images/2016/thread_sanitizer.png"></p>
+
+<p><code>Thread Sanitizer</code>主要检测以下问题：</p>
+
+<ul>
+<li>使用了未初始化的<code>mutexes</code></li>
+<li>Thread leaks，如缺少<code>pthread_join</code></li>
+<li>在signal handlers中的不安全调用，如调用<code>malloc</code></li>
+<li>在错误的线程中做unlock</li>
+<li>最重要的一点：<code>Data races</code>问题</li>
+</ul>
+
+
+<p>凡是通过<code>Thread Sanitizer</code>检查出来问题，都代表着有很严重的隐患，那么，赶快修复吧！</p>
+
+<h2>Static Analysis</h2>
+
+<p>Xcode8对<code>Static Analysis</code>做了近一步加强，新增以下问题检测：</p>
+
+<ul>
+<li>本地化检查</li>
+<li>内存泄漏检查</li>
+<li>Nullability检查</li>
+</ul>
+
+
+<h4>本地化检查</h4>
+
+<p>首先需要如下方式开启，<code>Static Analysis</code>将会检查<code>UI元素</code>的文字设置是否使用了<code>NSLocalizedString</code>。</p>
+
+<p><img src="/images/2016/localizability.png"></p>
+
+<h4>内存泄漏检查</h4>
+
+<p>主要检查的是<code>dealloc</code>中内存的释放。这个功能来的有点晚，是一个给<code>MRC</code>使用的功能，在<code>ARC</code>基本普及的今天已经显得不是太重要了，当时没能雪中送炭，如今只能锦上添花了。</p>
+
+<p><img src="/images/2016/dealloc_release.png"></p>
+
+<h4>Nullability检查</h4>
+
+<p>这项检查是针对设置<code>nonnull</code>的<code>property</code>或<code>返回值</code>。当设置为<code>nonnull</code>，但返回值可能为<code>nil</code>时则会有相应warning。</p>
+
+<p><img src="/images/2016/nullability.png"></p>
+
+<h2>参考链接</h2>
+
+<ol>
+<li><a href="https://developer.apple.com/videos/wwdc/2016/?id=236">Section 236 What’s New in Auto Layout</a></li>
+<li><a href="https://developer.apple.com/videos/wwdc/2016/?id=406">Section 406 Optimizing App Startup Time</a></li>
+<li><a href="https://developer.apple.com/videos/wwdc/2016/?id=410">Section 410 Visual Debugging with Xcode</a></li>
+<li><a href="https://developer.apple.com/videos/wwdc/2016/?id=412">Section 412 Thread Sanitizer and Static Analysis</a></li>
+<li><a href="https://developer.apple.com/videos/wwdc/2016/?id=417">Section 417 Debug Tips and Tricks</a></li>
+</ol>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">okeyang</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-10-07T23:25:00+08:00" pubdate data-updated="true">2016年10月07日</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ios/'>iOS</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/07/24/shen-ru-jie-xi-mac-os-x-and-ioscao-zuo-xi-tong--du-shu-bi-ji/" title="Previous Post: 《深入解析Mac OS X &amp; iOS操作系统》读书笔记">&laquo; 《深入解析Mac OS X &amp; iOS操作系统》读书笔记</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/10/07/xcode8xin-zeng-debugfang-fa/">Xcode8新增Debug方法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/24/shen-ru-jie-xi-mac-os-x-and-ioscao-zuo-xi-tong--du-shu-bi-ji/">《深入解析Mac OS X &amp; iOS操作系统》读书笔记</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/15/alfredpei-zhi/">Alfred配置</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/16/iproxy-tong-guo-usbshi-yong-sshlian-jie-iosshe-bei/">iproxy-通过USB使用SSH连接iOS设备</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/29/arcyu-fei-arcxia-de-weak-strong-dance/">ARC与非ARC下的Weak-Strong Dance</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - okeyang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'okeyang';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://okeyang.github.io/blog/2016/10/07/xcode8xin-zeng-debugfang-fa/';
+        var disqus_url = 'http://okeyang.github.io/blog/2016/10/07/xcode8xin-zeng-debugfang-fa/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
