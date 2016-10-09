@@ -4,7 +4,7 @@
   <title><![CDATA[文章类别：iOS | okeyang's blog]]></title>
   <link href="http://okeyang.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://okeyang.github.io/"/>
-  <updated>2016-10-10T00:36:18+08:00</updated>
+  <updated>2016-10-10T00:45:50+08:00</updated>
   <id>http://okeyang.github.io/</id>
   <author>
     <name><![CDATA[okeyang]]></name>
@@ -78,7 +78,7 @@ poarray `count` objectArray
 
 <p><img src="http://okeyang.github.io/images/2016/startup_time2.png"></p>
 
-<p>Apple工程师给出的建议是：</p>
+<p>Apple给出的建议是：</p>
 
 <blockquote><p>在最新的设备下，启动时间控制在<code>400ms</code>以内</p></blockquote>
 
