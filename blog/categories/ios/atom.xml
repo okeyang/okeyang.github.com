@@ -4,7 +4,7 @@
   <title><![CDATA[文章类别：iOS | okeyang's blog]]></title>
   <link href="http://okeyang.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://okeyang.github.io/"/>
-  <updated>2016-10-10T00:45:50+08:00</updated>
+  <updated>2016-12-02T20:50:48+08:00</updated>
   <id>http://okeyang.github.io/</id>
   <author>
     <name><![CDATA[okeyang]]></name>
@@ -37,7 +37,7 @@
 
 <h4>检测方法</h4>
 
-<p>可在<code>Launch Arguments</code>中添加<code>UIViewLayoutFeedbackLoopDebuggingThreshold</code>，设置循环布局阀值，如100，然后当循环布局次数超过阀值时会抛出异常，此时通过<code>po [_UIViewLayoutFeedbackLoopDebugger layoutFeedbackLoopDebugger]</code>可输出详细信息。</p>
+<p>可在<code>Launch Arguments</code>中添加<code>-UIViewLayoutFeedbackLoopDebuggingThreshold</code>，设置循环布局阀值，如100，然后当循环布局次数超过阀值时会抛出异常，此时通过<code>po [_UIViewLayoutFeedbackLoopDebugger layoutFeedbackLoopDebugger]</code>可输出详细信息。</p>
 
 <p><img src="http://okeyang.github.io/images/2016/auto_layout_loop_threshold.png"></p>
 
