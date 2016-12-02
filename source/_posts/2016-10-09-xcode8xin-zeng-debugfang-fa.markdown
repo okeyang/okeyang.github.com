@@ -19,7 +19,7 @@ categories: iOS
 <!-- more -->
 
 ####检测方法
-可在`Launch Arguments`中添加`UIViewLayoutFeedbackLoopDebuggingThreshold`，设置循环布局阀值，如100，然后当循环布局次数超过阀值时会抛出异常，此时通过`po [_UIViewLayoutFeedbackLoopDebugger layoutFeedbackLoopDebugger]`可输出详细信息。
+可在`Launch Arguments`中添加`-UIViewLayoutFeedbackLoopDebuggingThreshold`，设置循环布局阀值，如100，然后当循环布局次数超过阀值时会抛出异常，此时通过`po [_UIViewLayoutFeedbackLoopDebugger layoutFeedbackLoopDebugger]`可输出详细信息。
 
 <img src="/images/2016/auto_layout_loop_threshold.png">
 
